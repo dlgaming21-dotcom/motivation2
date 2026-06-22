@@ -98,7 +98,7 @@ async function executeTools(name, input) {
         success: true,
         message: `Proposta salvata: ${filename}`,
         downloads: [
-          { label: `Scarica Proposta — ${input.client_slug}`, url: `/downloads/proposals/${filename}`, type: 'proposal' },
+          { label: `Scarica Proposta — ${input.client_slug}`, url: `/api/print-proposal/${filename}`, type: 'proposal' },
         ],
       };
     }
