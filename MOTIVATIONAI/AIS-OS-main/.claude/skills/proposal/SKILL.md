@@ -1,16 +1,15 @@
 ---
 name: proposal
-description: Genera una proposta viaggio in PDF per un cliente. Cerca i dati del viaggio in Ragie, riempie il template HTML e lo converte in PDF. Usare su "genera proposta", "crea proposta", "nuova proposta", "fai la proposta per [CLIENTE]", o qualsiasi richiesta di generare una proposta di viaggio.
+description: Genera una proposta viaggio per un cliente. Verifica prima se il cliente è in wiki, poi cerca i dati del viaggio, riempie il template HTML e lo salva/converte. Usare su "genera proposta", "crea proposta", "nuova proposta", "fai la proposta per [CLIENTE]", o qualsiasi richiesta di generare una proposta di viaggio.
 ---
 
 ## Cosa fa questa skill
 
-Produce un PDF di proposta viaggio completo e brandizzato:
-1. Interroga Ragie per i dati del viaggio del cliente
-2. Riempie `templates/proposal-template.html` con tutti i dati trovati
-3. Salva l'HTML compilato in `templates/proposals/`
-4. Converte in PDF con `scripts/html-to-pdf.ps1` (Chrome headless)
-5. Apre il PDF risultante
+Produce una proposta viaggio completa e brandizzata in formato B2B (destinataria: l'agenzia di viaggio USA):
+1. Verifica se il cliente è presente nella wiki (Step 0)
+2. Cerca tutti i dati del viaggio nella wiki
+3. Riempie `templates/proposal-template.html` con i dati trovati
+4. Salva l'HTML compilato e lo converte in PDF
 
 ## Trigger
 
@@ -24,6 +23,17 @@ Produce un PDF di proposta viaggio completo e brandizzato:
 
 ## Esecuzione
 
+### Step 0 — Verifica cliente in wiki
+
+Prima di qualsiasi altra operazione, cerca il cliente nella wiki:
+
+1. Chiama `search_wiki` con il nome del cliente (o leggi `wiki/clienti/[slug].md` direttamente)
+2. **Se esiste la pagina cliente** → usa quei dati come fonte primaria per compilare il template. Non inventare dettagli non presenti nella wiki.
+3. **Se non esiste la pagina cliente** → avvisa l'operatore:
+   > "Il cliente [NOME] non è presente nella wiki. Per procedere servono: nome completo, nome agenzia USA, date del viaggio, destinazione, numero partecipanti, strutture previste. Fornisci questi dati o esegui prima `/ingest` del materiale su questo cliente."
+
+Non procedere oltre se il cliente non è in wiki e l'operatore non ha fornito i dati manualmente.
+
 ### Step 1 — Raccogli le info del cliente
 
 Dal messaggio dell'utente, estrai:
@@ -34,19 +44,15 @@ Dal messaggio dell'utente, estrai:
 
 Se mancano, chiedi solo le info strettamente necessarie per procedere. Non bloccare per dettagli che Ragie può fornire.
 
-### Step 2 — Interroga Ragie (ripetutamente se necessario)
+### Step 2 — Cerca nella wiki (ripetutamente se necessario)
 
-Prima query:
-```
-.\scripts\ragie-retrieve.ps1 -Query "[NOME CLIENTE] program itinerary hotel" -TopK 10
-```
+Query primaria: `search_wiki("[NOME CLIENTE] programma itinerario hotel")`
 
-Controlla gli indici dei chunk restituiti. Se ci sono lacune (es. hai chunk 0, 2, 4 ma manca 1 e 3), fai query aggiuntive mirate per recuperare il contenuto mancante:
-```
-.\scripts\ragie-retrieve.ps1 -Query "[NOME CLIENTE] [parola chiave del giorno mancante]" -TopK 6
-```
+Se il programma è multi-destinazione o la wiki ha pagine separate per fornitori/destinazioni, fai query aggiuntive mirate:
+- `search_wiki("[NOME CLIENTE] [città/giorno specifico]")`
+- `search_wiki("[nome hotel] [destinazione]")` — per i dettagli struttura
 
-Continua finché hai copertura completa di tutti i giorni del programma.
+Continua finché hai copertura completa di tutti i giorni del programma. Non produrre una proposta lacunosa.
 
 ### Step 3 — Riempi il template
 
@@ -56,12 +62,20 @@ templates/proposals/proposal-[CLIENTE-SLUG]-[YYYY-MM-DD].html
 ```
 
 **Regole contenuto — FONDAMENTALI:**
-- Includi TUTTO il contenuto dal documento originale — non riassumere, non omettere
+- Includi TUTTO il contenuto dalla wiki — non riassumere, non omettere
 - Orari precisi, nomi ristoranti con indirizzi e telefoni, nomi guide con contatti → tutto presente
 - Note operative, dress code, avvisi logistici → includi in `.note-box`
 - Opzioni cena suggerite → includi nel blocco `.dinner-options`
 - Info ospiti (nomi, date nascita, contatti) → pagina "Guests & Contacts"
-- Se un dato non è in Ragie → lascia `[TO COMPLETE]` visibile nel testo
+- Se un dato non è nella wiki → lascia `[TO COMPLETE]` visibile nel testo
+
+**Tono — B2B professionale:**
+Il destinatario è un travel agent americano professionista (es. Andrew Harper Travel). Scrivi per chi deve leggere velocemente e verificare la logistica.
+- Priorità: struttura, servizi inclusi, orari, note operative, contatti
+- Riduci del 40% le frasi enfatiche e descrittive: evita "indimenticabile", "magica", "straordinaria", "immerso nell'atmosfera di..."
+- Frasi fattuali: "Private guided tour of the Uffizi — 2 hours, skip-the-line access included" invece di "Un'esperienza magica tra i capolavori del Rinascimento"
+- Un minimo di calore è accettabile; la proposta deve però essere scansionabile in 30 secondi
+- Le descrizioni dei luoghi possono essere evocative (1 frase) — i dettagli logistici devono essere esaurienti
 
 **Struttura pagine:**
 - Pagina 1: Cover (B2B — intestata all'agenzia, non al cliente finale)
@@ -134,9 +148,8 @@ Comunica:
 |---|---|
 | `templates/proposal-template.html` | Template base con variabili `{{...}}` — non modificare |
 | `templates/proposals/proposal-[SLUG]-[DATE].html` | HTML compilato per questo cliente |
-| `templates/proposals/proposal-[SLUG]-[DATE].pdf` | PDF finale |
-| `scripts/html-to-pdf.ps1` | Conversione HTML → PDF via Chrome headless |
-| `scripts/ragie-retrieve.ps1` | Query semantica su Google Drive |
+| `wiki/clienti/[slug].md` | Fonte dati principale del cliente |
+| `wiki/fornitori/[slug].md` | Dettagli strutture e fornitori collegati |
 
 ---
 
@@ -144,8 +157,8 @@ Comunica:
 
 | Caso | Comportamento |
 |---|---|
-| Cliente non in Ragie | Riempi con i dati del messaggio utente, `[TO COMPLETE]` per il resto |
+| Cliente non in wiki | Avvisa operatore, chiedi dati o suggerisci `/ingest` — non procedere senza dati |
+| Wiki ha dati parziali | Usa ciò che c'è, `[TO COMPLETE]` per il resto, elenca le lacune all'operatore |
 | Viaggio multi-destinazione | Aggiungi pagine itinerario extra — nessun limite |
-| Nessun dato di prezzo | Lascia `Upon request` nella sezione Investment (default del template) |
+| Nessun dato di prezzo | Nessuna pagina Investment nel template — i prezzi vanno in documento separato |
 | Guida non specificata | Lascia `[TO COMPLETE — guide TBD]` nella riga `.guide-line` |
-| Chunk Ragie incompleti | Fai query aggiuntive prima di procedere — non produrre una proposta lacunosa |

@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{CLIENT_NAME}} — Italy by Motivation</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!--
     HOW TO USE
@@ -32,13 +28,13 @@
   <style>
     /* ── Brand tokens ──────────────────────────────────────────────────── */
     :root {
-      --navy:        #1C2448;   /* confirmed from brand SVG */
-      --magenta:     #D61B7A;   /* adjust if needed to match exact brand pink */
-      --cream:       #F7F4EF;
-      --warm-white:  #FAFAF8;
-      --text:        #1A1A1A;
+      --primary:     #1a1a1a;
+      --magenta:     #E91E8C;
+      --cream:       #f9f9f9;
+      --warm-white:  #ffffff;
+      --text:        #1a1a1a;
       --text-muted:  #6B6B6B;
-      --border:      #E5E0D8;
+      --border:      #fce4f3;
     }
 
     /* ── Print setup ───────────────────────────────────────────────────── */
@@ -50,7 +46,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: Arial, sans-serif;
       color: var(--text);
       background: #fff;
       -webkit-print-color-adjust: exact;
@@ -75,7 +71,7 @@
     /* ═══════════════════════════════════════════════════════════════════ */
 
     .cover {
-      background: var(--navy);
+      background: var(--primary);
     }
 
     .cover-header {
@@ -102,7 +98,7 @@
     .cover-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(160deg, #253068 0%, #1C2448 45%, #111830 100%);
+      background: linear-gradient(160deg, #333333 0%, #1a1a1a 45%, #111111 100%);
       opacity: 0.8;
     }
 
@@ -133,7 +129,7 @@
     }
 
     .cover-destination {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 54px;
       font-weight: 600;
       color: #fff;
@@ -159,8 +155,7 @@
     }
 
     .cover-dates {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
+      font-family: Georgia, serif;
       font-size: 20px;
       color: rgba(255,255,255,0.9);
     }
@@ -199,7 +194,7 @@
 
     .page-header {
       flex-shrink: 0;
-      background: var(--navy);
+      background: var(--primary);
       padding: 16px 52px;
       display: flex;
       align-items: center;
@@ -257,10 +252,10 @@
     }
 
     .day-number {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 44px;
       font-weight: 400;
-      color: var(--navy);
+      color: var(--primary);
       line-height: 1;
       letter-spacing: -1px;
     }
@@ -281,9 +276,9 @@
     }
 
     .day-title {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 20px;
-      color: var(--navy);
+      color: var(--primary);
       margin-bottom: 9px;
       line-height: 1.3;
     }
@@ -334,7 +329,7 @@
 
     .hotel-block-accent {
       width: 3px;
-      background: var(--navy);
+      background: var(--primary);
       flex-shrink: 0;
     }
 
@@ -353,7 +348,8 @@
     .hotel-name {
       font-size: 13.5px;
       font-weight: 500;
-      color: var(--navy);
+      font-style: italic;
+      color: var(--primary);
     }
 
     .hotel-location {
@@ -377,9 +373,9 @@
     }
 
     .section-title {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 34px;
-      color: var(--navy);
+      color: var(--primary);
       margin-bottom: 6px;
       line-height: 1.1;
     }
@@ -391,7 +387,7 @@
     }
 
     .price-block {
-      background: var(--navy);
+      background: var(--primary);
       padding: 22px 30px;
       display: flex;
       align-items: center;
@@ -410,7 +406,7 @@
     }
 
     .price-amount {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 38px;
       color: #fff;
       line-height: 1;
@@ -427,7 +423,7 @@
     }
 
     .price-nights {
-      font-family: 'Playfair Display', serif;
+      font-family: Georgia, serif;
       font-size: 22px;
       color: #fff;
     }
@@ -464,7 +460,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--navy);
+      background: var(--primary);
       flex-shrink: 0;
       margin-top: 5px;
     }
@@ -542,7 +538,7 @@
     <img class="page-header-logo"
          src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
          alt="Motivation">
-    <span class="page-header-label">Your Itinerary</span>
+    <span class="page-header-label">Itinerary Program</span>
   </div>
 
   <div class="page-content">
@@ -614,7 +610,7 @@
     <img class="page-header-logo"
          src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
          alt="Motivation">
-    <span class="page-header-label">Your Itinerary</span>
+    <span class="page-header-label">Itinerary Program</span>
   </div>
 
   <div class="page-content">
