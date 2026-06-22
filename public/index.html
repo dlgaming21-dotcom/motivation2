@@ -607,6 +607,10 @@ async function handleSend() {
             scrollBottom();
           } else if (ev.type === 'downloads') {
             finalDownloads.push(...ev.files);
+          } else if (ev.type === 'tool_error') {
+            if (!streamingDiv) { placeholder.remove(); streamingDiv = createStreamingBubble(); }
+            streamingText += `\n\n⚠️ Errore tool ${ev.toolName}: ${ev.message}`;
+            streamingDiv.querySelector('.bubble').textContent = streamingText;
           } else if (ev.type === 'error') {
             streamingText = `⚠️ Errore: ${ev.message}`;
           }

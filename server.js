@@ -109,14 +109,21 @@ app.post('/api/chat', checkAuth, async (req, res) => {
           const result = await executeTools(block.name, block.input);
           const content = typeof result === 'string' ? result : JSON.stringify(result);
           toolResults.push({ type: 'tool_result', tool_use_id: block.id, content });
-          if (result?.downloads) allDownloads.push(...result.downloads);
+          if (result?.downloads) {
+            allDownloads.push(...result.downloads);
+            // Send immediately — don't wait for after the while loop
+            send({ type: 'downloads', files: result.downloads });
+            console.log('[tools] downloads sent:', result.downloads.map(d => d.url));
+          }
         } catch (err) {
+          console.error('[tools] error executing', block.name, ':', err.message);
           toolResults.push({
             type: 'tool_result',
             tool_use_id: block.id,
             content: `Errore: ${err.message}`,
             is_error: true,
           });
+          send({ type: 'tool_error', toolName: block.name, message: err.message });
         }
         send({ type: 'tool_end', toolName: block.name });
       }
@@ -128,9 +135,7 @@ app.post('/api/chat', checkAuth, async (req, res) => {
       ];
     }
 
-    if (allDownloads.length > 0) {
-      send({ type: 'downloads', files: allDownloads });
-    }
+    // Note: downloads already sent immediately after each tool — allDownloads kept for reference only
   } catch (err) {
     send({ type: 'error', message: err.message });
   }
