@@ -162,7 +162,6 @@ const DOWNLOAD_ICONS = {
 
 let history      = [];
 let loading      = false;
-let dashKey      = '';
 let attachedFile = null;
 let chatStarted  = false;
 
@@ -315,15 +314,14 @@ document.getElementById('newChatBtn').addEventListener('click', createNewConvers
 /* ── Auth ────────────────────────────────────────────────── */
 
 async function init() {
-  const stored = sessionStorage.getItem('dashKey') || '';
+  // Check existing session cookie — send no key, server validates cookie
   const res = await fetch('/api/verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key: stored }),
+    body: JSON.stringify({}),
   }).then(r => r.json()).catch(() => ({ ok: false }));
 
   if (res.ok) {
-    dashKey = stored;
     showApp();
   } else {
     showLock();
@@ -362,9 +360,7 @@ function startChat() {
 
 async function loadKpi() {
   try {
-    const data = await fetch('/api/kpi', {
-      headers: { 'X-Dashboard-Key': dashKey },
-    }).then(r => r.json());
+    const data = await fetch('/api/kpi').then(r => r.json());
 
     const revVal = document.getElementById('kpiRevValue');
     const revSub = document.getElementById('kpiRevSub');
@@ -443,6 +439,10 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function safeUrl(u) {
+  return (typeof u === 'string' && u.startsWith('/downloads/')) ? u : '#';
+}
+
 function appendUser(text, fileName) {
   const wrap = document.getElementById('messagesWrap');
   const div = document.createElement('div');
@@ -472,9 +472,9 @@ function appendAssistant(mdText, downloads = []) {
       const icon = DOWNLOAD_ICONS[d.type] || '';
       const fname = d.url.split('/').pop();
       if (d.type === 'proposal') {
-        btns += `<a href="${d.url}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`;
+        btns += `<a href="${safeUrl(d.url)}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`;
       } else {
-        btns += `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
+        btns += `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
       }
     }
     if (hasProposal) {
@@ -569,12 +569,11 @@ async function handleSend() {
   try {
     const resp = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: history }),
     });
 
     if (resp.status === 401) {
-      sessionStorage.removeItem('dashKey');
       location.reload();
       return;
     }
@@ -630,8 +629,8 @@ async function handleSend() {
           const icon = DOWNLOAD_ICONS[d.type] || '';
           const fname = d.url.split('/').pop();
           btns += d.type === 'proposal'
-            ? `<a href="${d.url}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`
-            : `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
+            ? `<a href="${safeUrl(d.url)}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`
+            : `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
         }
         if (hasProposal) btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
         btns += '</div>';
@@ -669,8 +668,6 @@ document.getElementById('lockForm').addEventListener('submit', async e => {
   }).then(r => r.json()).then(d => d.ok).catch(() => false);
 
   if (ok) {
-    dashKey = key;
-    sessionStorage.setItem('dashKey', key);
     showApp();
   } else {
     document.getElementById('lockError').classList.remove('hidden');

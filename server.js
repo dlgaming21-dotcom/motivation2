@@ -4,6 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const { buildSystemPrompt } = require('./lib/system-prompt');
@@ -24,6 +25,8 @@ app.get('/api/print-proposal/:filename', async (req, res) => {
     const printScript = '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},600);});</script>';
     html = html.replace('</body>', printScript + '</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    // CSP: block all scripts except the inline print-trigger injected above (Vuln 1 fix)
+    res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src https: data:; script-src 'unsafe-inline'");
     res.send(html);
   } catch {
     res.status(404).send('Proposta non trovata');
@@ -33,13 +36,34 @@ app.get('/api/print-proposal/:filename', async (req, res) => {
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 let systemPrompt = '';
 
+// ── Session management (Vuln 5 fix: HttpOnly cookie replaces plain header/sessionStorage) ──
+const sessions = new Map();
+const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
+
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  (cookieHeader || '').split(';').forEach(c => {
+    const i = c.indexOf('=');
+    if (i > 0) cookies[c.slice(0, i).trim()] = c.slice(i + 1).trim();
+  });
+  return cookies;
+}
+
+function createSession() {
+  const token = crypto.randomBytes(32).toString('hex');
+  sessions.set(token, Date.now() + SESSION_TTL);
+  return token;
+}
+
 function checkAuth(req, res, next) {
-  const password = process.env.DASHBOARD_PASSWORD;
-  if (!password) return next();
-  if (req.headers['x-dashboard-key'] !== password) {
-    return res.status(401).json({ error: 'Non autorizzato' });
+  const cookies = parseCookies(req.headers.cookie);
+  const token = cookies['dash_session'];
+  if (token) {
+    const expiry = sessions.get(token);
+    if (expiry && expiry > Date.now()) return next();
+    sessions.delete(token);
   }
-  next();
+  return res.status(401).json({ error: 'Non autorizzato' });
 }
 
 // Chat endpoint — SSE streaming with agentic tool loop
@@ -144,11 +168,33 @@ app.post('/api/chat', checkAuth, async (req, res) => {
   res.end();
 });
 
-// Password verification (called on page load to check if auth is needed)
+// Password verification — login sets HttpOnly session cookie; no-key call checks existing session
 app.post('/api/verify', (req, res) => {
   const password = process.env.DASHBOARD_PASSWORD;
-  if (!password) return res.json({ ok: true, noAuth: true });
-  res.json({ ok: req.body.key === password });
+  const { key } = req.body;
+
+  if (key) {
+    if (key !== password) return res.json({ ok: false });
+    const token = createSession();
+    const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    res.cookie('dash_session', token, {
+      httpOnly: true,
+      secure: isHttps,
+      sameSite: 'Strict',
+      maxAge: SESSION_TTL,
+    });
+    return res.json({ ok: true });
+  }
+
+  // No key — check existing session cookie
+  const cookies = parseCookies(req.headers.cookie);
+  const token = cookies['dash_session'];
+  if (token) {
+    const expiry = sessions.get(token);
+    if (expiry && expiry > Date.now()) return res.json({ ok: true });
+    sessions.delete(token);
+  }
+  return res.json({ ok: false });
 });
 
 // KPI endpoint — fetches quick analytics for the welcome screen
