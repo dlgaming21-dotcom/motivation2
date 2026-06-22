@@ -204,6 +204,11 @@ app.get('/api/kpi', checkAuth, async (req, res) => {
 });
 
 async function start() {
+  if (!process.env.DASHBOARD_PASSWORD) {
+    console.error('FATAL: DASHBOARD_PASSWORD non impostata. Il server non si avvia senza autenticazione.');
+    process.exit(1);
+  }
+
   ['downloads/proposals', 'downloads/supplier-requests'].forEach(dir => {
     const p = path.join(__dirname, dir);
     if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
