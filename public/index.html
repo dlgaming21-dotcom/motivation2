@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Motivation AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -16,8 +13,8 @@
   <div class="lock-card">
     <div class="lock-card-header">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" class="lock-logo" aria-label="Motivation">
-        <path d="M14 14 L36 56 L60 34" stroke="#C8006E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M46 12 L60 28" stroke="#C8006E" stroke-width="9" stroke-linecap="round"/>
+        <path d="M14 14 L36 56 L60 34" stroke="#E91E8C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M46 12 L60 28" stroke="#E91E8C" stroke-width="9" stroke-linecap="round"/>
       </svg>
     </div>
     <div class="lock-card-body">
@@ -35,88 +32,127 @@
 <!-- ── Main app ─────────────────────────────────────────── -->
 <div id="app" class="hidden">
 
-  <header class="app-header">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" class="header-logo" aria-label="Motivation">
-      <path d="M14 14 L36 56 L60 34" stroke="#C8006E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M46 12 L60 28" stroke="#C8006E" stroke-width="9" stroke-linecap="round"/>
-    </svg>
-    <span class="header-title">Motivation AI</span>
-    <div class="header-dot"></div>
-  </header>
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Welcome / Analytics screen -->
-  <div id="welcomeScreen">
-    <div class="aurora-layer"></div>
-    <div class="welcome-content">
-      <div class="welcome-greeting">Buongiorno, <strong>Alessandro.</strong></div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-icon">💶</div>
-          <div class="kpi-label">Fatturato Q2 2026</div>
-          <div class="kpi-value loading" id="kpiRevValue">&nbsp;</div>
-          <div class="kpi-sub" id="kpiRevSub">Caricamento…</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">📅</div>
-          <div class="kpi-label">Booking imminenti</div>
-          <div class="kpi-value loading" id="kpiTaskValue">&nbsp;</div>
-          <div class="kpi-sub" id="kpiTaskSub">Caricamento…</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon">📄</div>
-          <div class="kpi-label">Ultima proposta</div>
-          <div class="kpi-value loading" id="kpiProposalValue">&nbsp;</div>
-          <div class="kpi-sub" id="kpiProposalSub">Caricamento…</div>
-        </div>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" aria-label="Motivation">
+          <path d="M14 14 L36 56 L60 34" stroke="#E91E8C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M46 12 L60 28" stroke="#E91E8C" stroke-width="9" stroke-linecap="round"/>
+        </svg>
+        <span class="sidebar-logo-text">Motivation AI</span>
       </div>
-
-      <div class="welcome-hint">Scrivi un messaggio per iniziare</div>
-    </div>
-  </div>
-
-  <!-- Chat -->
-  <div class="messages-wrap hidden" id="messagesWrap"></div>
-  <div class="tool-bar hidden" id="toolBar"></div>
-
-  <!-- File preview -->
-  <div class="file-preview-wrap hidden" id="filePreviewWrap" style="padding: 0 24px 0;">
-    <div class="file-pill">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>
-      <span class="file-pill-name" id="fileNameLabel">—</span>
-      <button class="file-pill-remove" id="removeFileBtn" title="Rimuovi allegato">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="input-area">
-    <div class="input-box">
-      <button class="attach-btn" id="attachBtn" title="Allega file">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-        </svg>
-      </button>
-      <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
-      <textarea id="msgInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
-      <button id="sendBtn" title="Invia (Invio)">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22,2 15,22 11,13 2,9"></polygon>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Chiudi">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
     </div>
-    <div class="input-hint">Invio per inviare &nbsp;·&nbsp; Shift+Invio per nuova riga</div>
-  </div>
 
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Nuova conversazione
+    </button>
+
+    <div class="conversations-list" id="conversationsList"></div>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">A</div>
+      <span class="user-name">Alessandro</span>
+    </div>
+  </aside>
+
+  <!-- Main area -->
+  <main class="main-area">
+
+    <header class="app-header">
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="header-dot"></div>
+    </header>
+
+    <!-- Welcome / Analytics screen -->
+    <div id="welcomeScreen">
+      <div class="aurora-layer"></div>
+      <div class="welcome-content">
+        <div class="welcome-greeting">Buongiorno, <strong>Alessandro.</strong></div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">💶</div>
+            <div class="kpi-label">Fatturato Q2 2026</div>
+            <div class="kpi-value loading" id="kpiRevValue">&nbsp;</div>
+            <div class="kpi-sub" id="kpiRevSub">Caricamento…</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📅</div>
+            <div class="kpi-label">Booking imminenti</div>
+            <div class="kpi-value loading" id="kpiTaskValue">&nbsp;</div>
+            <div class="kpi-sub" id="kpiTaskSub">Caricamento…</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📄</div>
+            <div class="kpi-label">Ultima proposta</div>
+            <div class="kpi-value loading" id="kpiProposalValue">&nbsp;</div>
+            <div class="kpi-sub" id="kpiProposalSub">Caricamento…</div>
+          </div>
+        </div>
+
+        <div class="welcome-hint">Scrivi un messaggio per iniziare</div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="messages-wrap hidden" id="messagesWrap"></div>
+    <div class="tool-bar hidden" id="toolBar"></div>
+
+    <!-- File preview -->
+    <div class="file-preview-wrap hidden" id="filePreviewWrap">
+      <div class="file-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>
+        <span class="file-pill-name" id="fileNameLabel">—</span>
+        <button class="file-pill-remove" id="removeFileBtn" title="Rimuovi allegato">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-box">
+        <button class="attach-btn" id="attachBtn" title="Allega file">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+        </button>
+        <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
+        <textarea id="msgInput" placeholder="Scrivi un messaggio…" rows="1"></textarea>
+        <button id="sendBtn" title="Invia (Invio)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+          </svg>
+        </button>
+      </div>
+      <div class="input-hint">Invio per inviare &nbsp;·&nbsp; Shift+Invio per nuova riga</div>
+    </div>
+
+  </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 <script>
-/* ── Config ───────────────────────────────────────────── */
+/* ── Config ──────────────────────────────────────────────── */
 
 const TOOL_LABELS = {
+  search_wiki:         'Cercando nella wiki',
   search_ragie:        'Cercando nel knowledge base',
   query_airtable:      'Consultando il database',
   generate_proposal:   'Generando la proposta',
@@ -124,21 +160,165 @@ const TOOL_LABELS = {
 };
 
 const DOWNLOAD_ICONS = {
-  proposal: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>`,
+  proposal: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`,
   email:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`,
 };
 
-/* ── State ────────────────────────────────────────────── */
+/* ── State ───────────────────────────────────────────────── */
 
-let history    = [];
-let loading    = false;
-let dashKey    = '';
-let attachedFile = null;  // { name, type, data } where data is base64
-let chatStarted = false;
+let history      = [];
+let loading      = false;
+let dashKey      = '';
+let attachedFile = null;
+let chatStarted  = false;
+
+let conversations         = [];
+let currentConversationId = null;
 
 marked.use({ breaks: true, gfm: true });
 
-/* ── Auth ─────────────────────────────────────────────── */
+/* ── Conversation management ─────────────────────────────── */
+
+function loadConversations() {
+  try { conversations = JSON.parse(localStorage.getItem('moti_convs') || '[]'); }
+  catch { conversations = []; }
+}
+
+function saveConversations() {
+  try { localStorage.setItem('moti_convs', JSON.stringify(conversations)); }
+  catch {}
+}
+
+function getRelativeTime(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const d = Math.floor(diff / 86400000);
+  if (d === 0) return 'Oggi';
+  if (d === 1) return 'Ieri';
+  if (d < 7)  return d + ' giorni fa';
+  if (d < 30) return Math.floor(d / 7) + ' sett. fa';
+  return new Date(dateStr).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+}
+
+function renderSidebarConversations() {
+  const list = document.getElementById('conversationsList');
+  if (!conversations.length) {
+    list.innerHTML = '<div class="conv-empty">Nessuna conversazione</div>';
+    return;
+  }
+  list.innerHTML = conversations.map(c => `
+    <div class="conv-item${c.id === currentConversationId ? ' active' : ''}" data-id="${c.id}">
+      <div class="conv-title">${escHtml(c.title)}</div>
+      <div class="conv-time">${getRelativeTime(c.updatedAt)}</div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.conv-item').forEach(el =>
+    el.addEventListener('click', () => loadConversation(el.dataset.id))
+  );
+}
+
+function getOrCreateConversation(titleText) {
+  if (currentConversationId) {
+    return conversations.find(c => c.id === currentConversationId);
+  }
+  const conv = {
+    id: 'conv_' + Date.now(),
+    title: (titleText || 'Nuova conversazione').slice(0, 40),
+    messages: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  conversations.unshift(conv);
+  currentConversationId = conv.id;
+  saveConversations();
+  renderSidebarConversations();
+  return conv;
+}
+
+function contentForStorage(content) {
+  if (typeof content === 'string') return content;
+  if (Array.isArray(content)) {
+    const t = content.find(b => b.type === 'text');
+    return t ? t.text : '(allegato)';
+  }
+  return String(content);
+}
+
+function saveMessageToConversation(role, content) {
+  const conv = conversations.find(c => c.id === currentConversationId);
+  if (!conv) return;
+  conv.messages.push({ role, content: contentForStorage(content) });
+  conv.updatedAt = new Date().toISOString();
+  saveConversations();
+}
+
+function loadConversation(id) {
+  const conv = conversations.find(c => c.id === id);
+  if (!conv) return;
+
+  currentConversationId = id;
+  history = conv.messages.map(m => ({ role: m.role, content: m.content }));
+
+  // Show chat, hide welcome
+  const welcome = document.getElementById('welcomeScreen');
+  welcome.style.display = 'none';
+  welcome.classList.remove('fade-out');
+  document.getElementById('messagesWrap').classList.remove('hidden');
+  document.getElementById('toolBar').classList.remove('hidden');
+  chatStarted = true;
+
+  // Re-render
+  const wrap = document.getElementById('messagesWrap');
+  wrap.innerHTML = '';
+  for (const msg of conv.messages) {
+    if (msg.role === 'user') {
+      appendUser(msg.content, null);
+    } else {
+      appendAssistant(msg.content, []);
+    }
+  }
+
+  renderSidebarConversations();
+  closeSidebar();
+  scrollBottom();
+  document.getElementById('msgInput').focus();
+}
+
+function createNewConversation() {
+  currentConversationId = null;
+  history = [];
+  chatStarted = false;
+
+  const wrap = document.getElementById('messagesWrap');
+  wrap.classList.add('hidden');
+  wrap.innerHTML = '';
+  document.getElementById('toolBar').classList.add('hidden');
+
+  const welcome = document.getElementById('welcomeScreen');
+  welcome.style.display = '';
+  welcome.classList.remove('fade-out');
+
+  renderSidebarConversations();
+  closeSidebar();
+  document.getElementById('msgInput').focus();
+}
+
+/* ── Sidebar toggle ──────────────────────────────────────── */
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('visible');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('visible');
+}
+
+document.getElementById('menuBtn').addEventListener('click', openSidebar);
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+document.getElementById('newChatBtn').addEventListener('click', createNewConversation);
+
+/* ── Auth ────────────────────────────────────────────────── */
 
 async function init() {
   const stored = sessionStorage.getItem('dashKey') || '';
@@ -164,16 +344,17 @@ function showLock() {
 function showApp() {
   document.getElementById('lockScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
+  loadConversations();
+  renderSidebarConversations();
   loadKpi();
   setTimeout(() => document.getElementById('msgInput').focus(), 80);
 }
 
-/* ── Welcome → Chat transition ────────────────────────── */
+/* ── Welcome → Chat transition ───────────────────────────── */
 
 function startChat() {
   if (chatStarted) return;
   chatStarted = true;
-
   const welcome = document.getElementById('welcomeScreen');
   welcome.classList.add('fade-out');
   setTimeout(() => {
@@ -183,7 +364,7 @@ function startChat() {
   }, 320);
 }
 
-/* ── KPI fetch ────────────────────────────────────────── */
+/* ── KPI fetch ───────────────────────────────────────────── */
 
 async function loadKpi() {
   try {
@@ -191,7 +372,6 @@ async function loadKpi() {
       headers: { 'X-Dashboard-Key': dashKey },
     }).then(r => r.json());
 
-    // Revenue
     const revVal = document.getElementById('kpiRevValue');
     const revSub = document.getElementById('kpiRevSub');
     revVal.classList.remove('loading');
@@ -204,14 +384,12 @@ async function loadKpi() {
       revSub.textContent = 'stimato Q2 2026';
     }
 
-    // Bookings
     const taskVal = document.getElementById('kpiTaskValue');
     const taskSub = document.getElementById('kpiTaskSub');
     taskVal.classList.remove('loading');
     taskVal.textContent = data.tasks.count ?? '—';
     taskSub.textContent = data.tasks.label ?? 'confermati';
 
-    // Last proposal
     const propVal = document.getElementById('kpiProposalValue');
     const propSub = document.getElementById('kpiProposalSub');
     propVal.classList.remove('loading');
@@ -226,11 +404,9 @@ async function loadKpi() {
       propSub.textContent = 'fa · ' + data.lastProposal.filename;
     }
   } catch {
-    const revVal = document.getElementById('kpiRevValue');
-    revVal.classList.remove('loading');
-    revVal.textContent = '€ 285K';
+    document.getElementById('kpiRevValue').classList.remove('loading');
+    document.getElementById('kpiRevValue').textContent = '€ 285K';
     document.getElementById('kpiRevSub').textContent = 'stimato Q2 2026';
-
     ['kpiTaskValue','kpiProposalValue'].forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('loading');
@@ -241,7 +417,7 @@ async function loadKpi() {
   }
 }
 
-/* ── File attachment ──────────────────────────────────── */
+/* ── File attachment ─────────────────────────────────────── */
 
 document.getElementById('attachBtn').addEventListener('click', () => {
   document.getElementById('fileInput').click();
@@ -250,11 +426,9 @@ document.getElementById('attachBtn').addEventListener('click', () => {
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = (e) => {
-    const dataUrl = e.target.result;
-    const base64 = dataUrl.split(',')[1];
+    const base64 = e.target.result.split(',')[1];
     attachedFile = { name: file.name, type: file.type, data: base64 };
     document.getElementById('fileNameLabel').textContent = file.name;
     document.getElementById('filePreviewWrap').classList.remove('hidden');
@@ -269,10 +443,10 @@ document.getElementById('removeFileBtn').addEventListener('click', () => {
   document.getElementById('fileNameLabel').textContent = '—';
 });
 
-/* ── Render helpers ───────────────────────────────────── */
+/* ── Render helpers ──────────────────────────────────────── */
 
 function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function appendUser(text, fileName) {
@@ -283,7 +457,7 @@ function appendUser(text, fileName) {
   if (fileName) {
     inner += `<div style="margin-top:8px;font-size:11px;opacity:0.75">📎 ${escHtml(fileName)}</div>`;
   }
-  inner += `</div>`;
+  inner += '</div>';
   div.innerHTML = inner;
   wrap.appendChild(div);
   scrollBottom();
@@ -294,7 +468,8 @@ function appendAssistant(mdText, downloads = []) {
   const div = document.createElement('div');
   div.className = 'message message-assistant';
 
-  let inner = `<div class="bubble">${marked.parse(mdText || '')}</div>`;
+  let inner = `<div class="msg-avatar">M</div><div class="msg-body">`;
+  inner += `<div class="bubble">${marked.parse(mdText || '')}</div>`;
 
   if (downloads.length > 0) {
     let btns = '<div class="downloads">';
@@ -309,13 +484,13 @@ function appendAssistant(mdText, downloads = []) {
       }
     }
     if (hasProposal) {
-      btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>
-               Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+      btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
     }
     btns += '</div>';
     inner += btns;
   }
 
+  inner += '</div>';
   div.innerHTML = inner;
   wrap.appendChild(div);
   scrollBottom();
@@ -326,7 +501,7 @@ function appendPlaceholder() {
   const wrap = document.getElementById('messagesWrap');
   const div = document.createElement('div');
   div.className = 'message message-assistant';
-  div.innerHTML = `<div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  div.innerHTML = `<div class="msg-avatar">M</div><div class="msg-body"><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
   wrap.appendChild(div);
   scrollBottom();
   return div;
@@ -344,32 +519,22 @@ function scrollBottom() {
   requestAnimationFrame(() => { w.scrollTop = w.scrollHeight; });
 }
 
-/* ── Build message content for API ───────────────────── */
+/* ── Build message content for API ───────────────────────── */
 
 function buildUserContent(text, file) {
   if (!file) return text;
-
-  const isImage = file.type.startsWith('image/');
   const blocks = [];
-
-  if (isImage) {
-    blocks.push({
-      type: 'image',
-      source: { type: 'base64', media_type: file.type, data: file.data },
-    });
+  if (file.type.startsWith('image/')) {
+    blocks.push({ type: 'image', source: { type: 'base64', media_type: file.type, data: file.data } });
   } else {
     const docType = file.type === 'application/pdf' ? 'application/pdf' : 'text/plain';
-    blocks.push({
-      type: 'document',
-      source: { type: 'base64', media_type: docType, data: file.data },
-    });
+    blocks.push({ type: 'document', source: { type: 'base64', media_type: docType, data: file.data } });
   }
-
   blocks.push({ type: 'text', text });
   return blocks;
 }
 
-/* ── Send ─────────────────────────────────────────────── */
+/* ── Send ────────────────────────────────────────────────── */
 
 async function handleSend() {
   if (loading) return;
@@ -378,6 +543,7 @@ async function handleSend() {
   if (!text && !attachedFile) return;
 
   startChat();
+  const conv = getOrCreateConversation(text || '(allegato)');
 
   const file = attachedFile;
   attachedFile = null;
@@ -391,6 +557,7 @@ async function handleSend() {
 
   const apiContent = buildUserContent(text || '(vedi allegato)', file);
   history.push({ role: 'user', content: apiContent });
+  saveMessageToConversation('user', apiContent);
   appendUser(text || '(allegato)', file ? file.name : null);
 
   const placeholder = appendPlaceholder();
@@ -417,16 +584,14 @@ async function handleSend() {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop();
-
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         try {
           const ev = JSON.parse(line.slice(6));
-          if (ev.type === 'tool_start')  setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
+          if      (ev.type === 'tool_start')  setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
           else if (ev.type === 'tool_end')    setToolStatus('');
           else if (ev.type === 'text')        finalText = ev.content;
           else if (ev.type === 'downloads')   finalDownloads.push(...ev.files);
@@ -439,6 +604,8 @@ async function handleSend() {
     placeholder.remove();
     appendAssistant(finalText || '*Nessuna risposta*', finalDownloads);
     history.push({ role: 'assistant', content: finalText });
+    saveMessageToConversation('assistant', finalText);
+    renderSidebarConversations();
 
   } catch (err) {
     setToolStatus('');
@@ -451,7 +618,7 @@ async function handleSend() {
   document.getElementById('msgInput').focus();
 }
 
-/* ── Input UX ─────────────────────────────────────────── */
+/* ── Input UX ────────────────────────────────────────────── */
 
 document.getElementById('lockForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -474,10 +641,7 @@ document.getElementById('lockForm').addEventListener('submit', async e => {
 });
 
 document.getElementById('msgInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
 });
 
 document.getElementById('msgInput').addEventListener('input', function () {
@@ -487,7 +651,7 @@ document.getElementById('msgInput').addEventListener('input', function () {
 
 document.getElementById('sendBtn').addEventListener('click', handleSend);
 
-/* ── Boot ─────────────────────────────────────────────── */
+/* ── Boot ────────────────────────────────────────────────── */
 init();
 </script>
 </body>
