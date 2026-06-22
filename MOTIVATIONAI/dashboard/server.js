@@ -122,6 +122,58 @@ app.post('/api/verify', (req, res) => {
   res.json({ ok: req.body.key === password });
 });
 
+// KPI endpoint — fetches quick analytics for the welcome screen
+app.get('/api/kpi', checkAuth, async (req, res) => {
+  const { listRecords } = require('./lib/airtable');
+
+  const [tasks, lastProposal] = await Promise.allSettled([
+    // Upcoming confirmed bookings
+    listRecords('Bookings', { maxRecords: 100 }).then(records => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const upcoming = records.filter(r => {
+        const f = r.fields;
+        const dateStr = f['Data partenza'] || f['Check-in'] || f['Date'] || f['Start Date'] || f['StartDate'];
+        if (!dateStr) return false;
+        return new Date(dateStr) >= today;
+      });
+      const count = upcoming.length > 0 ? upcoming.length : records.length;
+      const label = upcoming.length > 0 ? 'nei prossimi 90 giorni' : 'confermati totali';
+      return { count, label };
+    }),
+
+    // Most recent proposal file
+    (async () => {
+      const dir = path.join(__dirname, 'downloads/proposals');
+      try {
+        const files = await fs.promises.readdir(dir);
+        const htmlFiles = files.filter(f => f.endsWith('.html'));
+        if (htmlFiles.length === 0) return { daysAgo: null, filename: null };
+
+        const withMtime = await Promise.all(
+          htmlFiles.map(async f => {
+            const stat = await fs.promises.stat(path.join(dir, f));
+            return { name: f, mtime: stat.mtimeMs };
+          })
+        );
+        withMtime.sort((a, b) => b.mtime - a.mtime);
+        const newest = withMtime[0];
+        const daysAgo = Math.floor((Date.now() - newest.mtime) / 86400000);
+        const shortName = newest.name.replace(/^proposal-/, '').replace(/-\d{4}-\d{2}-\d{2}\.html$/, '');
+        return { daysAgo, filename: shortName };
+      } catch {
+        return { daysAgo: null, filename: null };
+      }
+    })(),
+  ]);
+
+  res.json({
+    tasks:        tasks.status === 'fulfilled'        ? tasks.value        : { count: '—', label: 'Non disponibile' },
+    revenue:      { amount: null, label: 'Q2 2026' },
+    lastProposal: lastProposal.status === 'fulfilled' ? lastProposal.value : { daysAgo: null, filename: null },
+  });
+});
+
 async function start() {
   ['downloads/proposals', 'downloads/supplier-requests'].forEach(dir => {
     const p = path.join(__dirname, dir);

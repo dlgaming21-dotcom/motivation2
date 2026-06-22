@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motivation AIOS</title>
+  <title>Motivation AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
            alt="Motivation" class="lock-logo">
     </div>
     <div class="lock-card-body">
-      <h2>AIOS Dashboard</h2>
+      <h2>Motivation AI</h2>
       <p>Inserisci la password per accedere</p>
       <form id="lockForm" autocomplete="off">
         <input type="password" id="pwdInput" placeholder="Password" autocomplete="current-password">
@@ -36,16 +36,64 @@
   <header class="app-header">
     <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
          alt="Motivation" class="header-logo">
-    <span class="header-title">· AIOS</span>
+    <span class="header-title">Motivation AI</span>
     <div class="header-dot"></div>
   </header>
 
-  <div class="messages-wrap" id="messagesWrap"></div>
+  <!-- Welcome / Analytics screen -->
+  <div id="welcomeScreen">
+    <div class="aurora-layer"></div>
+    <div class="welcome-content">
+      <div class="welcome-greeting">Buongiorno, <strong>Motivation.</strong></div>
 
-  <div class="tool-bar" id="toolBar"></div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">💶</div>
+          <div class="kpi-label">Fatturato Q2 2026</div>
+          <div class="kpi-value">€ —</div>
+          <div class="kpi-sub">In aggiornamento</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📅</div>
+          <div class="kpi-label">Booking imminenti</div>
+          <div class="kpi-value loading" id="kpiTaskValue">&nbsp;</div>
+          <div class="kpi-sub" id="kpiTaskSub">Caricamento…</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📄</div>
+          <div class="kpi-label">Ultima proposta</div>
+          <div class="kpi-value loading" id="kpiProposalValue">&nbsp;</div>
+          <div class="kpi-sub" id="kpiProposalSub">Caricamento…</div>
+        </div>
+      </div>
+
+      <div class="welcome-hint">Scrivi un messaggio per iniziare</div>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="messages-wrap hidden" id="messagesWrap"></div>
+  <div class="tool-bar hidden" id="toolBar"></div>
+
+  <!-- File preview -->
+  <div class="file-preview-wrap hidden" id="filePreviewWrap" style="padding: 0 24px 0;">
+    <div class="file-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>
+      <span class="file-pill-name" id="fileNameLabel">—</span>
+      <button class="file-pill-remove" id="removeFileBtn" title="Rimuovi allegato">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
 
   <div class="input-area">
     <div class="input-box">
+      <button class="attach-btn" id="attachBtn" title="Allega file">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+        </svg>
+      </button>
+      <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
       <textarea id="msgInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
       <button id="sendBtn" title="Invia (Invio)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -64,8 +112,6 @@
 <script>
 /* ── Config ───────────────────────────────────────────── */
 
-const WELCOME = `Buongiorno. Come posso aiutarti oggi?`;
-
 const TOOL_LABELS = {
   search_ragie:        'Cercando nel knowledge base',
   query_airtable:      'Consultando il database',
@@ -80,9 +126,11 @@ const DOWNLOAD_ICONS = {
 
 /* ── State ────────────────────────────────────────────── */
 
-let history = [];       // [{ role, content }] shown in chat
-let loading = false;
-let dashKey  = '';
+let history    = [];
+let loading    = false;
+let dashKey    = '';
+let attachedFile = null;  // { name, type, data } where data is base64
+let chatStarted = false;
 
 marked.use({ breaks: true, gfm: true });
 
@@ -90,7 +138,7 @@ marked.use({ breaks: true, gfm: true });
 
 async function init() {
   const stored = sessionStorage.getItem('dashKey') || '';
-  const res  = await fetch('/api/verify', {
+  const res = await fetch('/api/verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ key: stored }),
@@ -112,56 +160,89 @@ function showLock() {
 function showApp() {
   document.getElementById('lockScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  const welcomeEl = appendAssistant(WELCOME);
-  appendWelcomeChips(welcomeEl);
+  loadKpi();
   setTimeout(() => document.getElementById('msgInput').focus(), 80);
 }
 
-function appendWelcomeChips(msgEl) {
-  const chips = [
-    { label: 'Cerca cliente',         text: 'Cerca '                          },
-    { label: 'Genera proposta',        text: 'Genera proposta per '            },
-    { label: 'Richieste fornitori',    text: 'Prepara richieste fornitori per ' },
-    { label: 'Query database',         text: 'Quanti '                         },
-  ];
-  const wrap = document.createElement('div');
-  wrap.className = 'quick-chips';
-  chips.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'chip';
-    btn.textContent = c.label;
-    btn.addEventListener('click', () => {
-      const input = document.getElementById('msgInput');
-      input.value = c.text;
-      input.style.height = 'auto';
-      input.style.height = Math.min(input.scrollHeight, 180) + 'px';
-      input.focus();
-      input.selectionStart = input.selectionEnd = c.text.length;
-      wrap.remove();
-    });
-    wrap.appendChild(btn);
-  });
-  msgEl.querySelector('.bubble').appendChild(wrap);
+/* ── Welcome → Chat transition ────────────────────────── */
+
+function startChat() {
+  if (chatStarted) return;
+  chatStarted = true;
+
+  const welcome = document.getElementById('welcomeScreen');
+  welcome.classList.add('fade-out');
+  setTimeout(() => {
+    welcome.style.display = 'none';
+    document.getElementById('messagesWrap').classList.remove('hidden');
+    document.getElementById('toolBar').classList.remove('hidden');
+  }, 320);
 }
 
-document.getElementById('lockForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const key = document.getElementById('pwdInput').value;
-  const ok  = await fetch('/api/verify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key }),
-  }).then(r => r.json()).then(d => d.ok).catch(() => false);
+/* ── KPI fetch ────────────────────────────────────────── */
 
-  if (ok) {
-    dashKey = key;
-    sessionStorage.setItem('dashKey', key);
-    showApp();
-  } else {
-    document.getElementById('lockError').classList.remove('hidden');
-    document.getElementById('pwdInput').value = '';
-    document.getElementById('pwdInput').focus();
+async function loadKpi() {
+  try {
+    const data = await fetch('/api/kpi', {
+      headers: { 'X-Dashboard-Key': dashKey },
+    }).then(r => r.json());
+
+    const taskVal = document.getElementById('kpiTaskValue');
+    const taskSub = document.getElementById('kpiTaskSub');
+    taskVal.classList.remove('loading');
+    taskVal.textContent = data.tasks.count;
+    taskSub.textContent = data.tasks.label;
+
+    const propVal = document.getElementById('kpiProposalValue');
+    const propSub = document.getElementById('kpiProposalSub');
+    propVal.classList.remove('loading');
+    if (data.lastProposal.daysAgo === null) {
+      propVal.textContent = '—';
+      propSub.textContent = 'Nessuna ancora';
+    } else if (data.lastProposal.daysAgo === 0) {
+      propVal.textContent = 'Oggi';
+      propSub.textContent = data.lastProposal.filename;
+    } else {
+      propVal.textContent = data.lastProposal.daysAgo + 'gg';
+      propSub.textContent = 'fa · ' + data.lastProposal.filename;
+    }
+  } catch {
+    ['kpiTaskValue','kpiProposalValue'].forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('loading');
+      el.textContent = '—';
+    });
+    document.getElementById('kpiTaskSub').textContent = 'Non disponibile';
+    document.getElementById('kpiProposalSub').textContent = 'Non disponibile';
   }
+}
+
+/* ── File attachment ──────────────────────────────────── */
+
+document.getElementById('attachBtn').addEventListener('click', () => {
+  document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', async function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+    attachedFile = { name: file.name, type: file.type, data: base64 };
+    document.getElementById('fileNameLabel').textContent = file.name;
+    document.getElementById('filePreviewWrap').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+  this.value = '';
+});
+
+document.getElementById('removeFileBtn').addEventListener('click', () => {
+  attachedFile = null;
+  document.getElementById('filePreviewWrap').classList.add('hidden');
+  document.getElementById('fileNameLabel').textContent = '—';
 });
 
 /* ── Render helpers ───────────────────────────────────── */
@@ -170,11 +251,16 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function appendUser(text) {
+function appendUser(text, fileName) {
   const wrap = document.getElementById('messagesWrap');
   const div = document.createElement('div');
   div.className = 'message message-user';
-  div.innerHTML = `<div class="bubble">${escHtml(text)}</div>`;
+  let inner = `<div class="bubble">${escHtml(text)}`;
+  if (fileName) {
+    inner += `<div style="margin-top:8px;font-size:11px;opacity:0.75">📎 ${escHtml(fileName)}</div>`;
+  }
+  inner += `</div>`;
+  div.innerHTML = inner;
   wrap.appendChild(div);
   scrollBottom();
 }
@@ -234,21 +320,54 @@ function scrollBottom() {
   requestAnimationFrame(() => { w.scrollTop = w.scrollHeight; });
 }
 
+/* ── Build message content for API ───────────────────── */
+
+function buildUserContent(text, file) {
+  if (!file) return text;
+
+  const isImage = file.type.startsWith('image/');
+  const blocks = [];
+
+  if (isImage) {
+    blocks.push({
+      type: 'image',
+      source: { type: 'base64', media_type: file.type, data: file.data },
+    });
+  } else {
+    const docType = file.type === 'application/pdf' ? 'application/pdf' : 'text/plain';
+    blocks.push({
+      type: 'document',
+      source: { type: 'base64', media_type: docType, data: file.data },
+    });
+  }
+
+  blocks.push({ type: 'text', text });
+  return blocks;
+}
+
 /* ── Send ─────────────────────────────────────────────── */
 
 async function handleSend() {
   if (loading) return;
   const input = document.getElementById('msgInput');
   const text  = input.value.trim();
-  if (!text) return;
+  if (!text && !attachedFile) return;
+
+  startChat();
+
+  const file = attachedFile;
+  attachedFile = null;
+  document.getElementById('filePreviewWrap').classList.add('hidden');
+  document.getElementById('fileNameLabel').textContent = '—';
 
   input.value = '';
   input.style.height = 'auto';
   loading = true;
   document.getElementById('sendBtn').disabled = true;
 
-  history.push({ role: 'user', content: text });
-  appendUser(text);
+  const apiContent = buildUserContent(text || '(vedi allegato)', file);
+  history.push({ role: 'user', content: apiContent });
+  appendUser(text || '(allegato)', file ? file.name : null);
 
   const placeholder = appendPlaceholder();
 
@@ -283,18 +402,11 @@ async function handleSend() {
         if (!line.startsWith('data: ')) continue;
         try {
           const ev = JSON.parse(line.slice(6));
-
-          if (ev.type === 'tool_start') {
-            setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
-          } else if (ev.type === 'tool_end') {
-            setToolStatus('');
-          } else if (ev.type === 'text') {
-            finalText = ev.content;
-          } else if (ev.type === 'downloads') {
-            finalDownloads.push(...ev.files);
-          } else if (ev.type === 'error') {
-            finalText = `⚠️ Errore: ${ev.message}`;
-          }
+          if (ev.type === 'tool_start')  setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
+          else if (ev.type === 'tool_end')    setToolStatus('');
+          else if (ev.type === 'text')        finalText = ev.content;
+          else if (ev.type === 'downloads')   finalDownloads.push(...ev.files);
+          else if (ev.type === 'error')       finalText = `⚠️ Errore: ${ev.message}`;
         } catch {}
       }
     }
@@ -316,6 +428,26 @@ async function handleSend() {
 }
 
 /* ── Input UX ─────────────────────────────────────────── */
+
+document.getElementById('lockForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const key = document.getElementById('pwdInput').value;
+  const ok  = await fetch('/api/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+  }).then(r => r.json()).then(d => d.ok).catch(() => false);
+
+  if (ok) {
+    dashKey = key;
+    sessionStorage.setItem('dashKey', key);
+    showApp();
+  } else {
+    document.getElementById('lockError').classList.remove('hidden');
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+});
 
 document.getElementById('msgInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
