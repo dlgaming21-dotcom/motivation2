@@ -52,7 +52,7 @@ body {
   text-align: center;
 }
 
-.lock-logo { height: 32px; width: auto; object-fit: contain; }
+.lock-logo { height: 32px; width: auto; object-fit: contain; filter: brightness(0) saturate(100%) invert(24%) sepia(94%) saturate(4000%) hue-rotate(309deg) brightness(90%); }
 
 .lock-card-body { padding: 30px 40px 36px; text-align: center; }
 
@@ -479,7 +479,7 @@ body {
 }
 
 .message-user      { align-self: flex-end; flex-direction: row-reverse; max-width: 74%; }
-.message-assistant { align-self: flex-start; }
+.message-assistant { align-self: flex-start; max-width: 100%; width: 100%; }
 
 .msg-avatar {
   width: 28px; height: 28px;
@@ -510,18 +510,16 @@ body {
 }
 
 .message-assistant .bubble {
-  background: rgba(255,255,255,0.68);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   color: var(--text);
-  border-radius: 4px 18px 18px 18px;
-  border: 1px solid rgba(255,255,255,0.8);
-  border-left: 2px solid var(--magenta);
-  padding: 16px 18px;
+  border: none;
+  padding: 0;
   font-size: 14px;
   line-height: 1.78;
   word-break: break-word;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: none;
 }
 
 /* Markdown */
