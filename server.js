@@ -62,7 +62,7 @@ app.post('/api/chat', checkAuth, async (req, res) => {
       const stream = await anthropic.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 16384,
-        system: systemPrompt,
+        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: apiMessages,
         tools: toolDefinitions,
         stream: true,
