@@ -14,15 +14,19 @@
 <!-- ── Lock screen ──────────────────────────────────────── -->
 <div id="lockScreen" class="lock-screen hidden">
   <div class="lock-card">
-    <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
-         alt="Motivation" class="lock-logo">
-    <h2>AIOS Dashboard</h2>
-    <p>Inserisci la password per accedere</p>
-    <form id="lockForm" autocomplete="off">
-      <input type="password" id="pwdInput" placeholder="Password" autocomplete="current-password">
-      <button type="submit">Accedi</button>
-    </form>
-    <div id="lockError" class="lock-error hidden">Password non corretta. Riprova.</div>
+    <div class="lock-card-header">
+      <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+           alt="Motivation" class="lock-logo">
+    </div>
+    <div class="lock-card-body">
+      <h2>AIOS Dashboard</h2>
+      <p>Inserisci la password per accedere</p>
+      <form id="lockForm" autocomplete="off">
+        <input type="password" id="pwdInput" placeholder="Password" autocomplete="current-password">
+        <button type="submit">Accedi</button>
+      </form>
+      <div id="lockError" class="lock-error hidden">Password non corretta. Riprova.</div>
+    </div>
   </div>
 </div>
 
@@ -32,7 +36,7 @@
   <header class="app-header">
     <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
          alt="Motivation" class="header-logo">
-    <span class="header-title">AIOS</span>
+    <span class="header-title">· AIOS</span>
     <div class="header-dot"></div>
   </header>
 
