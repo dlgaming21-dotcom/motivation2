@@ -11,9 +11,15 @@ const { buildSystemPrompt } = require('./lib/system-prompt');
 const { toolDefinitions, executeTools } = require('./lib/tools');
 
 const app = express();
+app.set('trust proxy', 1); // Fix 6: trust Railway's TLS-terminating proxy so req.secure is correct
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
+// Fix 3: add CSP to /downloads so LLM-generated HTML can't execute scripts when opened directly
+app.use('/downloads', (req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src https: data:");
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+}, express.static(path.join(__dirname, 'downloads')));
 
 // Serve proposal HTML with auto-print injected (opens print dialog in new tab → Save as PDF)
 app.get('/api/print-proposal/:filename', async (req, res) => {
@@ -22,11 +28,12 @@ app.get('/api/print-proposal/:filename', async (req, res) => {
   const filePath = path.join(__dirname, 'downloads/proposals', filename);
   try {
     let html = await fs.promises.readFile(filePath, 'utf-8');
-    const printScript = '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},600);});</script>';
+    // Fix 2: use nonce instead of 'unsafe-inline' so only this specific script is allowed
+    const nonce = crypto.randomBytes(16).toString('base64');
+    const printScript = `<script nonce="${nonce}">window.addEventListener("load",function(){setTimeout(function(){window.print();},600);});</script>`;
     html = html.replace('</body>', printScript + '</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    // CSP: block all scripts except the inline print-trigger injected above (Vuln 1 fix)
-    res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src https: data:; script-src 'unsafe-inline'");
+    res.setHeader('Content-Security-Policy', `default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src https: data:; script-src 'nonce-${nonce}'`);
     res.send(html);
   } catch {
     res.status(404).send('Proposta non trovata');
@@ -62,6 +69,8 @@ function checkAuth(req, res, next) {
     const expiry = sessions.get(token);
     if (expiry && expiry > Date.now()) return next();
     sessions.delete(token);
+    // Fix 5: clear stale cookie so browser stops re-sending it and gets a clean lock screen
+    res.clearCookie('dash_session', { httpOnly: true, sameSite: 'Strict' });
   }
   return res.status(401).json({ error: 'Non autorizzato' });
 }
@@ -193,6 +202,7 @@ app.post('/api/verify', (req, res) => {
     const expiry = sessions.get(token);
     if (expiry && expiry > Date.now()) return res.json({ ok: true });
     sessions.delete(token);
+    res.clearCookie('dash_session', { httpOnly: true, sameSite: 'Strict' });
   }
   return res.json({ ok: false });
 });
@@ -254,6 +264,14 @@ async function start() {
     console.error('FATAL: DASHBOARD_PASSWORD non impostata. Il server non si avvia senza autenticazione.');
     process.exit(1);
   }
+
+  // Fix 4: proactive session eviction — prevent unbounded Map growth
+  setInterval(() => {
+    const now = Date.now();
+    for (const [token, expiry] of sessions) {
+      if (expiry < now) sessions.delete(token);
+    }
+  }, 60 * 60 * 1000);
 
   ['downloads/proposals', 'downloads/supplier-requests'].forEach(dir => {
     const p = path.join(__dirname, dir);
