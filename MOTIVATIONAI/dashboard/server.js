@@ -14,6 +14,22 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 
+// Serve proposal HTML with auto-print injected (opens print dialog in new tab → Save as PDF)
+app.get('/api/print-proposal/:filename', async (req, res) => {
+  const filename = path.basename(req.params.filename);
+  if (!filename.endsWith('.html')) return res.status(400).send('Invalid filename');
+  const filePath = path.join(__dirname, 'downloads/proposals', filename);
+  try {
+    let html = await fs.promises.readFile(filePath, 'utf-8');
+    const printScript = '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},600);});</script>';
+    html = html.replace('</body>', printScript + '</body>');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch {
+    res.status(404).send('Proposta non trovata');
+  }
+});
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 let systemPrompt = '';
 
