@@ -59,25 +59,49 @@ app.post('/api/chat', checkAuth, async (req, res) => {
     const allDownloads = [];
 
     while (true) {
-      const response = await anthropic.messages.create({
+      const stream = await anthropic.messages.create({
         model: 'claude-sonnet-4-6',
         max_tokens: 16384,
         system: systemPrompt,
         messages: apiMessages,
         tools: toolDefinitions,
+        stream: true,
       });
 
-      const toolBlocks = response.content.filter(b => b.type === 'tool_use');
-      const textBlocks = response.content.filter(b => b.type === 'text');
+      const contentBlocks = [];
 
-      if (toolBlocks.length === 0) {
-        send({ type: 'text', content: textBlocks.map(b => b.text).join('') });
-        break;
+      for await (const event of stream) {
+        if (event.type === 'content_block_start') {
+          contentBlocks[event.index] = { ...event.content_block, _inputStr: '' };
+          if (event.content_block.type === 'tool_use') {
+            send({ type: 'tool_start', toolName: event.content_block.name });
+          }
+        }
+        if (event.type === 'content_block_delta') {
+          const block = contentBlocks[event.index];
+          if (!block) continue;
+          if (event.delta.type === 'text_delta') {
+            block.text = (block.text || '') + event.delta.text;
+            send({ type: 'text_delta', content: event.delta.text });
+          }
+          if (event.delta.type === 'input_json_delta') {
+            block._inputStr += event.delta.partial_json;
+          }
+        }
       }
 
-      for (const block of toolBlocks) {
-        send({ type: 'tool_start', toolName: block.name });
+      const toolBlocks = contentBlocks.filter(b => b && b.type === 'tool_use');
+
+      if (toolBlocks.length === 0) break; // testo già streamato
+
+      for (const b of toolBlocks) {
+        try { b.input = JSON.parse(b._inputStr || '{}'); } catch { b.input = {}; }
       }
+
+      const responseContent = contentBlocks.filter(Boolean).map(b => {
+        if (b.type === 'tool_use') return { type: 'tool_use', id: b.id, name: b.name, input: b.input };
+        return { type: 'text', text: b.text || '' };
+      });
 
       const toolResults = [];
       for (const block of toolBlocks) {
@@ -99,7 +123,7 @@ app.post('/api/chat', checkAuth, async (req, res) => {
 
       apiMessages = [
         ...apiMessages,
-        { role: 'assistant', content: response.content },
+        { role: 'assistant', content: responseContent },
         { role: 'user', content: toolResults },
       ];
     }

@@ -12,10 +12,7 @@
 <div id="lockScreen" class="lock-screen hidden">
   <div class="lock-card">
     <div class="lock-card-header">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" class="lock-logo" aria-label="Motivation">
-        <path d="M14 14 L36 56 L60 34" stroke="#E91E8C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M46 12 L60 28" stroke="#E91E8C" stroke-width="9" stroke-linecap="round"/>
-      </svg>
+      <img class="lock-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
     </div>
     <div class="lock-card-body">
       <h2>Motivation AI</h2>
@@ -38,13 +35,10 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" aria-label="Motivation">
-          <path d="M14 14 L36 56 L60 34" stroke="#E91E8C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M46 12 L60 28" stroke="#E91E8C" stroke-width="9" stroke-linecap="round"/>
-        </svg>
+      <button class="sidebar-logo" onclick="createNewConversation()" aria-label="Torna alla home">
+        <img class="sidebar-logo-img" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
         <span class="sidebar-logo-text">Motivation AI</span>
-      </div>
+      </button>
       <button class="sidebar-close" id="sidebarClose" aria-label="Chiudi">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -507,6 +501,16 @@ function appendPlaceholder() {
   return div;
 }
 
+function createStreamingBubble() {
+  const wrap = document.getElementById('messagesWrap');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant streaming';
+  div.innerHTML = '<div class="msg-avatar">M</div><div class="msg-body"><div class="bubble"></div></div>';
+  wrap.appendChild(div);
+  scrollBottom();
+  return div;
+}
+
 function setToolStatus(text) {
   const bar = document.getElementById('toolBar');
   if (!text) { bar.innerHTML = ''; return; }
@@ -578,7 +582,8 @@ async function handleSend() {
     const reader  = resp.body.getReader();
     const decoder = new TextDecoder();
     let   buffer  = '';
-    let   finalText = '';
+    let   streamingDiv  = null;
+    let   streamingText = '';
     const finalDownloads = [];
 
     while (true) {
@@ -591,20 +596,50 @@ async function handleSend() {
         if (!line.startsWith('data: ')) continue;
         try {
           const ev = JSON.parse(line.slice(6));
-          if      (ev.type === 'tool_start')  setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
-          else if (ev.type === 'tool_end')    setToolStatus('');
-          else if (ev.type === 'text')        finalText = ev.content;
-          else if (ev.type === 'downloads')   finalDownloads.push(...ev.files);
-          else if (ev.type === 'error')       finalText = `⚠️ Errore: ${ev.message}`;
+          if (ev.type === 'tool_start') {
+            setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
+          } else if (ev.type === 'tool_end') {
+            setToolStatus('');
+          } else if (ev.type === 'text_delta') {
+            streamingText += ev.content;
+            if (!streamingDiv) { placeholder.remove(); streamingDiv = createStreamingBubble(); }
+            streamingDiv.querySelector('.bubble').textContent = streamingText;
+            scrollBottom();
+          } else if (ev.type === 'downloads') {
+            finalDownloads.push(...ev.files);
+          } else if (ev.type === 'error') {
+            streamingText = `⚠️ Errore: ${ev.message}`;
+          }
         } catch {}
       }
     }
 
     setToolStatus('');
-    placeholder.remove();
-    appendAssistant(finalText || '*Nessuna risposta*', finalDownloads);
-    history.push({ role: 'assistant', content: finalText });
-    saveMessageToConversation('assistant', finalText);
+    if (streamingDiv) {
+      streamingDiv.classList.remove('streaming');
+      streamingDiv.querySelector('.bubble').innerHTML = marked.parse(streamingText || '');
+      if (finalDownloads.length > 0) {
+        const msgBody = streamingDiv.querySelector('.msg-body');
+        let btns = '<div class="downloads">';
+        const hasProposal = finalDownloads.some(d => d.type === 'proposal');
+        for (const d of finalDownloads) {
+          const icon = DOWNLOAD_ICONS[d.type] || '';
+          const fname = d.url.split('/').pop();
+          btns += d.type === 'proposal'
+            ? `<a href="${d.url}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`
+            : `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
+        }
+        if (hasProposal) btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+        btns += '</div>';
+        msgBody.insertAdjacentHTML('beforeend', btns);
+      }
+    } else {
+      placeholder.remove();
+      appendAssistant(streamingText || '*Nessuna risposta*', finalDownloads);
+    }
+    const finalContent = streamingText || '*Nessuna risposta*';
+    history.push({ role: 'assistant', content: finalContent });
+    saveMessageToConversation('assistant', finalContent);
     renderSidebarConversations();
 
   } catch (err) {
