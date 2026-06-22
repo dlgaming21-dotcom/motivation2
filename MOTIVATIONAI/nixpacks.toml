@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd dashboard && npm ci"]
+cmds = ["cd dashboard && npm install"]
 
 [start]
 cmd = "node dashboard/server.js"
