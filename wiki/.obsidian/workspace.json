@@ -1,0 +1,218 @@
+{
+  "main": {
+    "id": "27f675696605465a",
+    "type": "split",
+    "children": [
+      {
+        "id": "fbbcb9998e05d895",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6c782398a6674af8",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Vista grafo"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "364eb36d716650fd",
+    "type": "split",
+    "children": [
+      {
+        "id": "053af6db2e72a651",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3d878f486205184e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Esplora risorse"
+            }
+          },
+          {
+            "id": "41eb404e1d78ef74",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Ricerca"
+            }
+          },
+          {
+            "id": "610f5e93f519e0d4",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Segnalibri"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "2f8644acff63ebde",
+    "type": "split",
+    "children": [
+      {
+        "id": "d7f3d818ffedc0ec",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "19a69cb074f63d3e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Riferimenti"
+            }
+          },
+          {
+            "id": "3413a88af269a3b4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Collegamenti in uscita"
+            }
+          },
+          {
+            "id": "fa1aa24cd779f1b1",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etichette"
+            }
+          },
+          {
+            "id": "aefcf88dadd93d2b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Tutte le proprietà"
+            }
+          },
+          {
+            "id": "b7e8be4c3ab9ca04",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Struttura"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Apri selezione rapida": false,
+      "graph:Apri vista grafo": false,
+      "canvas:Crea nuova lavagna": false,
+      "daily-notes:Apri nota del giorno": false,
+      "templates:Inserisci modello": false,
+      "command-palette:Apri riquadro comandi": false,
+      "bases:Crea nuova Base": false
+    }
+  },
+  "active": "6c782398a6674af8",
+  "lastOpenFiles": [
+    "log.md.tmp.25784.ac5724429b72",
+    "index.md.tmp.25784.9362a720d645",
+    "index.md.tmp.25784.20796b8362a1",
+    "fornitori/andrew-harper-travel.md.tmp.25784.d1435bbabe40",
+    "agenzie/andrew-harper-travel.md",
+    "agenzie/andrew-harper-travel.md.tmp.25784.01b4065b79ea",
+    "agenzie",
+    "index.md.tmp.25784.00d5fc764648",
+    "index.md.tmp.25784.02e280a01c8c",
+    "destinazioni/puglia.md",
+    "destinazioni/costiera-amalfitana.md",
+    "destinazioni/portofino.md",
+    "destinazioni/portofino.md.tmp.25784.5177a4a17350",
+    "destinazioni/lago-di-como.md",
+    "destinazioni/lago-di-como.md.tmp.25784.6480d4e78df0",
+    "destinazioni/milano.md",
+    "destinazioni/milano.md.tmp.25784.d6f41fb18e67",
+    "fornitori/fausta-del-piano.md",
+    "fornitori/gse-leonardo.md",
+    "fornitori/villa-deste-cernobbio.md",
+    "fornitori/fiorella-casartelli.md",
+    "fornitori/andrew-harper-travel.md",
+    "fornitori/laura-sabbadin.md",
+    "fornitori/wilma-zanco.md",
+    "fornitori/ncc-firenze-leonardo.md",
+    "destinazioni/toscana.md",
+    "destinazioni/firenze.md",
+    "destinazioni/venezia.md",
+    "destinazioni/roma.md",
+    "fornitori/are-group.md",
+    "fornitori/maria-laura-giorgi.md",
+    "fornitori/ester-ghezzi.md",
+    "fornitori/daniele-meledandri.md",
+    "fornitori/avignonesi.md",
+    "fornitori/thats-amore.md",
+    "clienti/kelly.md"
+  ]
+}
