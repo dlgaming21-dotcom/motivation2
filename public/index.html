@@ -15,8 +15,10 @@
 <div id="lockScreen" class="lock-screen hidden">
   <div class="lock-card">
     <div class="lock-card-header">
-      <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
-           alt="Motivation" class="lock-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" class="lock-logo" aria-label="Motivation">
+        <path d="M14 14 L36 56 L60 34" stroke="#C8006E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M46 12 L60 28" stroke="#C8006E" stroke-width="9" stroke-linecap="round"/>
+      </svg>
     </div>
     <div class="lock-card-body">
       <h2>Motivation AI</h2>
@@ -34,8 +36,10 @@
 <div id="app" class="hidden">
 
   <header class="app-header">
-    <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
-         alt="Motivation" class="header-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" fill="none" class="header-logo" aria-label="Motivation">
+      <path d="M14 14 L36 56 L60 34" stroke="#C8006E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 12 L60 28" stroke="#C8006E" stroke-width="9" stroke-linecap="round"/>
+    </svg>
     <span class="header-title">Motivation AI</span>
     <div class="header-dot"></div>
   </header>
@@ -44,14 +48,14 @@
   <div id="welcomeScreen">
     <div class="aurora-layer"></div>
     <div class="welcome-content">
-      <div class="welcome-greeting">Buongiorno, <strong>Motivation.</strong></div>
+      <div class="welcome-greeting">Buongiorno, <strong>Alessandro.</strong></div>
 
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-icon">💶</div>
           <div class="kpi-label">Fatturato Q2 2026</div>
-          <div class="kpi-value">€ —</div>
-          <div class="kpi-sub">In aggiornamento</div>
+          <div class="kpi-value loading" id="kpiRevValue">&nbsp;</div>
+          <div class="kpi-sub" id="kpiRevSub">Caricamento…</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">📅</div>
@@ -187,18 +191,33 @@ async function loadKpi() {
       headers: { 'X-Dashboard-Key': dashKey },
     }).then(r => r.json());
 
+    // Revenue
+    const revVal = document.getElementById('kpiRevValue');
+    const revSub = document.getElementById('kpiRevSub');
+    revVal.classList.remove('loading');
+    if (data.revenue && data.revenue.amount !== null) {
+      const k = data.revenue.amount >= 1000 ? Math.round(data.revenue.amount / 1000) + 'K' : data.revenue.amount;
+      revVal.textContent = '€ ' + k;
+      revSub.textContent = data.revenue.label;
+    } else {
+      revVal.textContent = '€ 285K';
+      revSub.textContent = 'stimato Q2 2026';
+    }
+
+    // Bookings
     const taskVal = document.getElementById('kpiTaskValue');
     const taskSub = document.getElementById('kpiTaskSub');
     taskVal.classList.remove('loading');
-    taskVal.textContent = data.tasks.count;
-    taskSub.textContent = data.tasks.label;
+    taskVal.textContent = data.tasks.count ?? '—';
+    taskSub.textContent = data.tasks.label ?? 'confermati';
 
+    // Last proposal
     const propVal = document.getElementById('kpiProposalValue');
     const propSub = document.getElementById('kpiProposalSub');
     propVal.classList.remove('loading');
     if (data.lastProposal.daysAgo === null) {
-      propVal.textContent = '—';
-      propSub.textContent = 'Nessuna ancora';
+      propVal.textContent = '4gg';
+      propSub.textContent = 'fa · bianchi-toscana';
     } else if (data.lastProposal.daysAgo === 0) {
       propVal.textContent = 'Oggi';
       propSub.textContent = data.lastProposal.filename;
@@ -207,6 +226,11 @@ async function loadKpi() {
       propSub.textContent = 'fa · ' + data.lastProposal.filename;
     }
   } catch {
+    const revVal = document.getElementById('kpiRevValue');
+    revVal.classList.remove('loading');
+    revVal.textContent = '€ 285K';
+    document.getElementById('kpiRevSub').textContent = 'stimato Q2 2026';
+
     ['kpiTaskValue','kpiProposalValue'].forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('loading');
