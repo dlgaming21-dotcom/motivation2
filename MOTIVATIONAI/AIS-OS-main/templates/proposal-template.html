@@ -675,6 +675,43 @@
 
 <!-- Pricing goes in a separate document — no Investment page here -->
 
+<div class="print-bar no-print">
+  <button onclick="window.print()" class="print-btn">
+    🖨 Stampa / Salva come PDF
+  </button>
+  <span class="print-hint">Chrome → Salva come PDF · Formato: A4 · Margini: Nessuno · ✓ Grafica di sfondo</span>
+</div>
+
+<style>
+  .print-bar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    z-index: 9999;
+  }
+  .print-btn {
+    background: #E91E8C;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .print-btn:hover { background: #f0359c; }
+  .print-hint { font-size: 11px; color: #6b7280; max-width: 220px; line-height: 1.4; }
+  @media print { .no-print { display: none !important; } }
+</style>
 
 </body>
 </html>

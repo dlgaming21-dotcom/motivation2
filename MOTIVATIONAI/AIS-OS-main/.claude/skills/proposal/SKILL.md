@@ -125,20 +125,21 @@ Per viaggi multi-destinazione (es. Roma + Costiera), usa la foto della destinazi
 
 Per aggiungere giorni: duplica il blocco `.day-section` — non c'è limite al numero di pagine itinerario.
 
-### Step 4 — Converti in PDF
+### Step 4 — Salva la proposta
 
-```powershell
-.\scripts\html-to-pdf.ps1 -HtmlPath "templates/proposals/proposal-[CLIENTE-SLUG]-[YYYY-MM-DD].html"
-```
+Chiama il tool `generate_proposal` con:
+- `client_slug`: slug del cliente (es. `"kirk-family-2025"`)
+- `html_content`: l'HTML completo compilato
 
-Il PDF viene salvato nella stessa cartella dell'HTML, con estensione `.pdf`. Lo script lo apre automaticamente.
+Il sistema salva il file e fornisce automaticamente il link di download. **NON includere URL o link nel testo della risposta** — il pulsante di download è fornito automaticamente dal sistema.
 
 ### Step 5 — Riporta all'utente
 
-Comunica:
-- Percorso del PDF generato
-- Numero di pagine
+Conferma solo:
+- Proposta generata ✓
 - Elenco dei `[TO COMPLETE]` rimasti (se presenti), così l'operatore sa cosa completare manualmente
+
+**Non scrivere URL, percorsi di file o link** — il pulsante di download appare automaticamente sotto il messaggio.
 
 ---
 
