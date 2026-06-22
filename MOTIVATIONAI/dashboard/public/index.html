@@ -64,15 +64,7 @@
 <script>
 /* ── Config ───────────────────────────────────────────── */
 
-const WELCOME = `Ciao! Sono l'AIOS di Motivation.
-
-Posso aiutarti con:
-- **Ricerca nel knowledge base** — clienti, viaggi passati, strutture, fornitori
-- **Proposte viaggio** — scrivi *"genera proposta per [CLIENTE]"*
-- **Richieste fornitori** — scrivi *"richieste fornitori per [CLIENTE]"*
-- **Query database** — conteggi, elenchi, filtri su Airtable
-
-Come posso aiutarti?`;
+const WELCOME = `Buongiorno. Come posso aiutarti oggi?`;
 
 const TOOL_LABELS = {
   search_ragie:        'Cercando nel knowledge base',
@@ -120,8 +112,36 @@ function showLock() {
 function showApp() {
   document.getElementById('lockScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  appendAssistant(WELCOME);
+  const welcomeEl = appendAssistant(WELCOME);
+  appendWelcomeChips(welcomeEl);
   setTimeout(() => document.getElementById('msgInput').focus(), 80);
+}
+
+function appendWelcomeChips(msgEl) {
+  const chips = [
+    { label: 'Cerca cliente',         text: 'Cerca '                          },
+    { label: 'Genera proposta',        text: 'Genera proposta per '            },
+    { label: 'Richieste fornitori',    text: 'Prepara richieste fornitori per ' },
+    { label: 'Query database',         text: 'Quanti '                         },
+  ];
+  const wrap = document.createElement('div');
+  wrap.className = 'quick-chips';
+  chips.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = c.label;
+    btn.addEventListener('click', () => {
+      const input = document.getElementById('msgInput');
+      input.value = c.text;
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 180) + 'px';
+      input.focus();
+      input.selectionStart = input.selectionEnd = c.text.length;
+      wrap.remove();
+    });
+    wrap.appendChild(btn);
+  });
+  msgEl.querySelector('.bubble').appendChild(wrap);
 }
 
 document.getElementById('lockForm').addEventListener('submit', async e => {
@@ -166,15 +186,21 @@ function appendAssistant(mdText, downloads = []) {
 
   let inner = `<div class="bubble">${marked.parse(mdText || '')}</div>`;
 
-       if (d.type === 'proposal') {
+  if (downloads.length > 0) {
+    let btns = '<div class="downloads">';
+    const hasProposal = downloads.some(d => d.type === 'proposal');
+    for (const d of downloads) {
+      const icon = DOWNLOAD_ICONS[d.type] || '';
+      const fname = d.url.split('/').pop();
+      if (d.type === 'proposal') {
         btns += `<a href="${d.url}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`;
       } else {
         btns += `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
       }
-  }
-  if (hasProposal) {
-    btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>
-             Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+    }
+    if (hasProposal) {
+      btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>
+               Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
     }
     btns += '</div>';
     inner += btns;

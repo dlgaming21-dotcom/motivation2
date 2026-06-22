@@ -1,5 +1,5 @@
 ﻿[phases.install]
-cmds = ["npm ci"]
+cmds = ["cd dashboard && npm ci"]
 
 [start]
-cmd = "node server.js"
+cmd = "node dashboard/server.js"
