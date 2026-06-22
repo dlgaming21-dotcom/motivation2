@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirk Family — Italy by Motivation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:       #1C2448;
+      --magenta:    #D61B7A;
+      --cream:      #F7F4EF;
+      --warm-white: #FAFAF8;
+      --text:       #1A1A1A;
+      --text-muted: #6B6B6B;
+      --border:     #E5E0D8;
+    }
+
+    @page { size: A4; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page shell ─────────────────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Cover ──────────────────────────────────────────────────────── */
+    .cover { background: var(--navy); }
+    .cover-header { padding: 38px 52px 0; flex-shrink: 0; }
+    .cover-logo { height: 28px; }
+    .cover-hero {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 52px 52px; position: relative;
+    }
+    .cover-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #253068 0%, #1C2448 45%, #111830 100%);
+      opacity: 0.8;
+    }
+    .cover-rule {
+      position: absolute; left: 52px; top: 80px; bottom: 100px; width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
+      opacity: 0.6;
+    }
+    .cover-content { position: relative; z-index: 1; padding-left: 20px; }
+    .cover-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--magenta); margin-bottom: 14px; }
+    .cover-destination { font-family: 'Playfair Display', serif; font-size: 50px; font-weight: 600; color: #fff; line-height: 1.08; letter-spacing: -1px; margin-bottom: 28px; }
+    .cover-divider { width: 44px; height: 2px; background: rgba(255,255,255,0.2); margin-bottom: 20px; }
+    .cover-client { font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.55); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .cover-dates { font-family: 'Playfair Display', serif; font-style: italic; font-size: 20px; color: rgba(255,255,255,0.9); }
+    .cover-footer { flex-shrink: 0; padding: 18px 52px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 14px; }
+    .cover-footer-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--magenta); }
+    .cover-footer-text { font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* ── Interior shell ─────────────────────────────────────────────── */
+    .interior { background: var(--warm-white); }
+    .page-header { flex-shrink: 0; background: var(--navy); padding: 15px 52px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header-logo { height: 18px; }
+    .page-header-label { font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.4); letter-spacing: 2.5px; text-transform: uppercase; }
+    .page-content { flex: 1; overflow: hidden; padding: 32px 52px 18px; }
+    .page-footer { flex-shrink: 0; padding: 12px 52px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .page-footer-text { font-size: 9px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── Guests page ────────────────────────────────────────────────── */
+    .section-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--magenta); margin-bottom: 8px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--navy); margin-bottom: 20px; }
+
+    .guests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    .guest-row { background: #fff; border: 1px solid var(--border); padding: 9px 14px; }
+    .guest-name { font-size: 12.5px; font-weight: 500; color: var(--navy); }
+    .guest-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .contacts-row { display: flex; gap: 20px; margin-bottom: 18px; }
+    .contact-item { background: #fff; border: 1px solid var(--border); padding: 9px 14px; flex: 1; }
+    .contact-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .contact-name { font-size: 12px; font-weight: 500; color: var(--navy); }
+    .contact-phone { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+    .note-box { background: var(--cream); border-left: 3px solid var(--border); padding: 11px 16px; font-size: 11.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 14px; }
+    .note-box strong { color: var(--text); font-weight: 600; }
+
+    .info-row { display: flex; gap: 16px; }
+    .info-pill { background: var(--navy); color: #fff; font-size: 10px; padding: 5px 12px; letter-spacing: 1px; text-transform: uppercase; }
+    .info-pill.accent { background: var(--magenta); }
+
+    /* ── Day section ────────────────────────────────────────────────── */
+    .day-section + .day-section { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--border); }
+
+    .day-label { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+    .day-number { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 400; color: var(--navy); line-height: 1; letter-spacing: -1px; }
+    .day-date { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    .day-accent { width: 36px; height: 2px; background: var(--magenta); margin-bottom: 7px; }
+    .day-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 10px; line-height: 1.3; }
+
+    /* Guide line */
+    .guide-line { font-size: 10.5px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .guide-tag { font-size: 8.5px; letter-spacing: 1.5px; text-transform: uppercase; background: var(--navy); color: rgba(255,255,255,0.7); padding: 2px 7px; }
+
+    /* Timeline */
+    .timeline { margin: 0 0 12px; border: 1px solid var(--border); background: #fff; }
+    .tl-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .tl-row:last-child { border-bottom: none; }
+    .tl-time { min-width: 52px; flex-shrink: 0; font-size: 10.5px; font-weight: 600; color: var(--navy); padding: 6px 10px; background: var(--cream); border-right: 1px solid var(--border); display: flex; align-items: flex-start; padding-top: 7px; }
+    .tl-body { flex: 1; padding: 6px 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+    .tl-body strong { color: var(--text); font-weight: 500; }
+
+    /* Restaurant card */
+    .restaurant { display: flex; align-items: stretch; background: #fff; border: 1px solid var(--border); overflow: hidden; margin: 10px 0; }
+    .restaurant-accent { width: 3px; background: var(--magenta); flex-shrink: 0; }
+    .restaurant-body { padding: 9px 14px; }
+    .restaurant-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--magenta); margin-bottom: 3px; }
+    .restaurant-name { font-size: 13px; font-weight: 500; color: var(--navy); }
+    .restaurant-info { font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+
+    /* Hotel block */
+    .hotel-block { display: flex; align-items: stretch; background: #fff; border: 1px solid var(--border); overflow: hidden; margin-top: 10px; }
+    .hotel-block-accent { width: 3px; background: var(--navy); flex-shrink: 0; }
+    .hotel-block-body { padding: 9px 14px; }
+    .hotel-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .hotel-name { font-size: 13px; font-weight: 500; color: var(--navy); }
+    .hotel-location { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Dinner options */
+    .dinner-block { margin-top: 10px; }
+    .dinner-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .dinner-options { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dinner-option { font-size: 11px; color: var(--text-muted); background: #fff; border: 1px solid var(--border); padding: 4px 10px; }
+
+    /* Investment */
+    .price-block { background: var(--navy); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .price-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+    .price-amount { font-family: 'Playfair Display', serif; font-size: 36px; color: #fff; line-height: 1; }
+    .price-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .price-nights { font-family: 'Playfair Display', serif; font-size: 22px; color: #fff; }
+    .inclusions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 20px; }
+    .col-title { font-size: 9.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+    .item-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; }
+    .item-bullet-yes { width: 6px; height: 6px; border-radius: 50%; background: var(--navy); flex-shrink: 0; margin-top: 5px; }
+    .item-bullet-no  { width: 6px; height: 6px; border-radius: 50%; background: var(--border); border: 1.5px solid #bbb; flex-shrink: 0; margin-top: 5px; }
+    .payment-box { background: var(--cream); border-left: 3px solid var(--magenta); padding: 12px 16px; font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+    .payment-box strong { color: var(--text); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 1 — COVER                                                   ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page cover">
+  <div class="cover-header">
+    <img class="cover-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+  </div>
+  <div class="cover-hero">
+    <div class="cover-bg"></div>
+    <div class="cover-rule"></div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">Portofino &amp;<br>Lake Como</div>
+      <div class="cover-divider"></div>
+      <div class="cover-client">Exclusively crafted for the Kirk Family</div>
+      <div class="cover-dates">July 12 — July 19, 2025</div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <span class="cover-footer-text">7 Nights</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">8 Guests</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">Genoa · Portofino · Cinque Terre · Milan · Lake Como</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 2 — GUESTS & CONTACTS                                       ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Guests &amp; Contacts</span>
+  </div>
+  <div class="page-content">
+
+    <div class="section-eyebrow">Travel Party</div>
+    <div class="section-title">Kirk Family — 8 Guests</div>
+
+    <div class="guests-grid">
+      <div class="guest-row">
+        <div class="guest-name">Spencer Kirk</div>
+        <div class="guest-detail">63 years old · 29 May 1961</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Kristen Kirk</div>
+        <div class="guest-detail">60 years old · 9 May 1964</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Olivia Kirk</div>
+        <div class="guest-detail">27 years old · 11 February 1997 · Daughter</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Harrison Kirk</div>
+        <div class="guest-detail">22 years old · 24 February 2002 · Son</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Addison Kirk</div>
+        <div class="guest-detail">24 years old · 21 November 2001 · Daughter-in-law</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Spencer Kirk (Baby)</div>
+        <div class="guest-detail">1 year old · 20 July 2024 · Grandson</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Donald Kirk</div>
+        <div class="guest-detail">29 years old · 4 April 1995 · Son</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">Rachel Kirk</div>
+        <div class="guest-detail">29 years old · 4 September 1995 · Daughter-in-law</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 8px;">
+      <div class="section-eyebrow" style="margin-bottom: 10px;">Emergency Contacts while Traveling</div>
+    </div>
+    <div class="contacts-row">
+      <div class="contact-item">
+        <div class="contact-label">Spencer Kirk</div>
+        <div class="contact-name">+1 801 656 8660</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Kristen Kirk</div>
+        <div class="contact-name">+1 801 656 8661</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Jeff Hansen — Pilot</div>
+        <div class="contact-name">+1 801 652 2965</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Food &amp; Dietary Notes —</strong> Being Mormons, the Kirk Family does not consume alcohol. No other allergies or food intolerances. All pre-booked restaurants have been briefed accordingly. A non-alcoholic rose syrup and canestrelli have been arranged at Creattivando in place of wine. For the baby (Spencer, 1 year), dietary needs should be confirmed directly with each venue.
+    </div>
+
+    <div class="note-box">
+      <strong>Vehicle Note —</strong> Mr. Spencer may occasionally remain in the transfer vehicle or proceed to the next stop independently. Please note that by Italian law, vehicles (minibuses and minivans) cannot remain stationary with the engine running to maintain air conditioning.
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 3 — DAY 1: GENOA                                            ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+  <div class="page-content">
+
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">01</span>
+        <span class="day-date">Saturday, July 12</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Arrival in Genoa — Pesto, Palaces &amp; the Road to Portofino</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide / Assistant</span>
+        Boris Cervar &nbsp;·&nbsp; +39 333 7018207
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">11:30</div>
+          <div class="tl-body">Land at Genoa Airport — meet &amp; greet with guide/assistant and driver. Porter service at terminal arranged by private jet organization.<br>
+          <strong>Flight Services EVO (porters):</strong> +39 345 2614592 — guide contacts them 15 min before landing.<br>
+          Minibus pickup at General Arrivals (only exit). Luggage truck departs directly to hotel in Portofino; drop-off at Piazza della Libertà (2 min walk from hotel — hotel porters collect with trolleys). Truck driver notifies hotel when passing Santa Margherita Ligure.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:20</div>
+          <div class="tl-body">Drop off at Piazza De Ferrari (5 min walk on foot to Creattivando).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:30</div>
+          <div class="tl-body"><strong>EMOTIONAL PESTO — Creattivando</strong>, Piazza Campetto 8A, Genoa<br>
+          Guests make pesto in a mortar using fresh ingredients — narrated and contextualized — then taste with focaccia and trofiette (traditional pasta, freshly cooked). Followed by rose syrup (non-alcoholic, local specialty) and traditional inland canestrelli.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:30</div>
+          <div class="tl-body"><strong>Panoramic walking tour</strong> with picture stops:<br>
+          Palazzo Ducale &amp; Piazza De Ferrari → Via Garibaldi (UNESCO) — Rolli palaces: Palazzo Bianco, Palazzo Rosso, Palazzo Lomellini → Castelletto Esplanade (vintage Art Nouveau elevator) → Porto Antico (redesigned 1992 by Renzo Piano).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">5:00</div>
+          <div class="tl-body">End tour — transfer to Portofino by minibus with guide/assistant.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">6:00</div>
+          <div class="tl-body">Arrival at Splendido Mare Hotel. Minibus drops off at Piazza Libertà (160mt from hotel, pedestrian area, 2 min walk). Check-in — rest of day at leisure — Dinner at client care.</div>
+        </div>
+      </div>
+
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation · 3 nights (Jul 12–15)</div>
+          <div class="hotel-name">Splendido Mare Hotel</div>
+          <div class="hotel-location">Portofino, Ligurian Riviera</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 4 — DAYS 2 & 3                                              ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 2 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">02</span>
+        <span class="day-date">Sunday, July 13</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">San Fruttuoso &amp; Camogli by Private Boat</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide</span>
+        Boris Cervar &nbsp;·&nbsp; +39 333 7018207
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:30</div>
+          <div class="tl-body">Breakfast at hotel. Guide and private boat depart from Splendido Mare for excursion to San Fruttuoso and Camogli.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:00</div>
+          <div class="tl-body">End tour at San Fruttuoso — transfer by boat to Camogli.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">1:00</div>
+          <div class="tl-body">Lunch a la carte at <strong>Il Doge Restaurant</strong> (booked under "Kirk Family").</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:30</div>
+          <div class="tl-body">Leisure time in Camogli and on the boat.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">5:00</div>
+          <div class="tl-body">Return to Portofino — drop off at Piazza Libertà (160mt, 2 min walk). Rest of day at leisure — Dinner at client care.</div>
+        </div>
+      </div>
+      <div class="restaurant">
+        <div class="restaurant-accent"></div>
+        <div class="restaurant-body">
+          <div class="restaurant-label">Lunch Restaurant</div>
+          <div class="restaurant-name">Il Doge — Cenobio dei Dogi</div>
+          <div class="restaurant-info">Via N. Cuneo n. 34, Camogli (GE) &nbsp;·&nbsp; +39 01857241 &nbsp;·&nbsp; cenobio.it/en/Restaurant/Il-Doge-Restaurant<br>Reservation: "Kirk Family"</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Splendido Mare Hotel — Portofino</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">03</span>
+        <span class="day-date">Monday, July 14</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Cinque Terre — The Blue Path</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide</span>
+        Boris Cervar &nbsp;·&nbsp; +39 333 7018207
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:00</div>
+          <div class="tl-body">Breakfast at hotel — meet with guide.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:00</div>
+          <div class="tl-body">2 minivans pick up at Piazza Libertà (160mt from hotel) — departure for Vernazza.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:45</div>
+          <div class="tl-body">Arrival in Vernazza — guided village tour, then <strong>Blue Path</strong> start. Minivans drop off at post office bar (ref: "Il Pirata delle 5 Terre", Via Gavino 36/38, 19018 Vernazza) — ~500mt from Castello Doria.<br>
+          <strong>Blue Path:</strong> 4.3 km, Vernazza → Monterosso. Note: very hot in July, some challenging climbs. Dress code: appropriate clothing, stocked with water, good walkers.<br>
+          <strong>For the baby:</strong> bring backpack/marsupium and umbrella for sun protection.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">1:15</div>
+          <div class="tl-body">Arrival in Monterosso — minivans pick up under the railroad bridge and transfer to restaurant.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">1:40</div>
+          <div class="tl-body">Lunch a la carte at <strong>Il Ciliegio</strong> (booked under "Kirk Family") — village visit — return transfer to Portofino.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">6:00</div>
+          <div class="tl-body">Arrival Portofino, Piazza Libertà. Rest of day at leisure — Dinner at client care.</div>
+        </div>
+      </div>
+      <div class="restaurant">
+        <div class="restaurant-accent"></div>
+        <div class="restaurant-body">
+          <div class="restaurant-label">Lunch Restaurant</div>
+          <div class="restaurant-name">Il Ciliegio</div>
+          <div class="restaurant-info">Località Beo 2, Monterosso al Mare &nbsp;·&nbsp; +39 0187 801220 &nbsp;·&nbsp; facebook.com/ilciliegio5terre/<br>Reservation: "Kirk Family"</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Splendido Mare Hotel — Portofino</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 5 — DAY 4: PORTOFINO → MILAN                                ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+  <div class="page-content">
+
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">04</span>
+        <span class="day-date">Tuesday, July 15</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Portofino → Milan — La Scala, Galleria &amp; the Duomo</div>
+      <div class="guide-line">
+        <span class="guide-tag">Assistant (transfer)</span>
+        Boris Cervar &nbsp;·&nbsp; +39 333 7018207 &nbsp;&nbsp;
+        <span class="guide-tag">Guide Milan</span>
+        Ester Ghezzi &nbsp;·&nbsp; +39 347 770 1285
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:25</div>
+          <div class="tl-body">Assistant at hotel — hotel porters carry luggage with trolleys to minivans in Piazza della Libertà.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">9:30</div>
+          <div class="tl-body">2 minivans pick up at Piazza Libertà (luggage on board) — private transfer to Milan.<br>
+          <em>Note: 2 minivans required — the minibus cannot reach Mandarin Oriental Hotel due to size restrictions.</em></div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:15</div>
+          <div class="tl-body">Arrival at <strong>Mandarin Oriental Hotel</strong> — check-in.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">1:00</div>
+          <div class="tl-body">Lunch at hotel.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:30</div>
+          <div class="tl-body">Guided city tour: <strong>La Scala Museum</strong> — walk through <strong>Galleria Vittorio Emanuele II</strong> — <strong>Duomo di Milano</strong> exterior (terraces not recommended in July: temperatures reach 45°/50°, descent by foot on narrow indoor stairs).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">5:30</div>
+          <div class="tl-body">Return to hotel to freshen up.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">7:30</div>
+          <div class="tl-body">Rest of day at leisure — Dinner at client care.</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation · 1 night (Jul 15–16)</div>
+          <div class="hotel-name">Mandarin Oriental Hotel</div>
+          <div class="hotel-location">Milan, Golden Quadrilateral</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 6 — DAY 5: MILAN → CERNOBBIO                                ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+  <div class="page-content">
+
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">05</span>
+        <span class="day-date">Wednesday, July 16</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">The Last Supper, Leonardo &amp; Arrival at Lake Como</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide Milan</span>
+        Daniele Galli &nbsp;·&nbsp; +39 349 4943064 &nbsp;&nbsp;
+        <span class="guide-tag">Assistant → Cernobbio</span>
+        Fiorella Casartelli &nbsp;·&nbsp; +39 348 5114649
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:30</div>
+          <div class="tl-body">Breakfast at hotel — guide and 2 minivans at hotel for transfer (luggage on board) to San Bernardino alle Ossa.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">10:30</div>
+          <div class="tl-body">Visit <strong>San Bernardino alle Ossa</strong> — transfer to Santa Maria delle Grazie.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:15</div>
+          <div class="tl-body">Meet with internal guide at <strong>Santa Maria delle Grazie</strong> (Piazza Santa Maria delle Grazie).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:30</div>
+          <div class="tl-body">Visit <strong>The Last Supper</strong> (Cenacolo Vinciano).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:45</div>
+          <div class="tl-body">End visit — bookshop &amp; restrooms — visit Church of Santa Maria delle Grazie — transfer to Leonardo Museum.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:30</div>
+          <div class="tl-body">Quick lunch at <strong>Caffè Carducci</strong> — 260mt from museum (4 min walk). Reservation: "Kirk Family".</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:00</div>
+          <div class="tl-body">Visit <strong>Leonardo da Vinci Museum of Science and Technology</strong> — galleries dedicated to Leonardo (approx. 2 hours).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">4:00</div>
+          <div class="tl-body">End visit — bookshop &amp; restrooms — meet with assistant and drivers.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">4:15</div>
+          <div class="tl-body">Private transfer Milan → Villa d'Este, Cernobbio.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">5:20</div>
+          <div class="tl-body">Arrival at <strong>Villa d'Este Hotel</strong> — check-in — rest of day at leisure — Dinner at client care.</div>
+        </div>
+      </div>
+      <div class="dinner-block">
+        <div class="dinner-label">Possible dinner options in Cernobbio (family restaurants, walking distance)</div>
+        <div class="dinner-options">
+          <div class="dinner-option">Osteria del Beuc — 7 min walk</div>
+          <div class="dinner-option">Trattoria del Vapore — 8 min walk</div>
+          <div class="dinner-option">Pizzeria Il Giardino — 6 min walk</div>
+          <div class="dinner-option">Trattoria Laghee — 9 min walk</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation · 3 nights (Jul 16–19)</div>
+          <div class="hotel-name">Villa d'Este Hotel</div>
+          <div class="hotel-location">Cernobbio, Lake Como</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 7 — DAYS 6 & 7: COMO & COMO LAKE                            ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 6 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">06</span>
+        <span class="day-date">Thursday, July 17</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Como City — Silk Museum &amp; a Morning at Leisure</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide</span>
+        Fiorella Casartelli &nbsp;·&nbsp; +39 348 5114649
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">Morning</div>
+          <div class="tl-body">Breakfast at hotel — morning at leisure at Villa d'Este.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">Midday</div>
+          <div class="tl-body">Free lunch.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:30</div>
+          <div class="tl-body">Transfer to Como by 16-seater minibus.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">3:00</div>
+          <div class="tl-body">Meet local guide in Como — guided tour of the city and <strong>Silk Museum</strong>.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">6:00</div>
+          <div class="tl-body">Transfer Como → Villa d'Este.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">6:30</div>
+          <div class="tl-body">Arrival at hotel — Dinner at client care (TBD).</div>
+        </div>
+      </div>
+      <div class="dinner-block">
+        <div class="dinner-label">Possible dinner options in Como (family restaurants)</div>
+        <div class="dinner-options">
+          <div class="dinner-option">Latteria San Fedele</div>
+          <div class="dinner-option">Pizzeria Ristorante Numero Nove</div>
+          <div class="dinner-option">Ristorante Sociale</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Villa d'Este Hotel — Cernobbio, Lake Como</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">07</span>
+        <span class="day-date">Friday, July 18</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Como Lake Cruise — Villa Balbianello &amp; Varenna</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide</span>
+        Fiorella Casartelli &nbsp;·&nbsp; +39 348 5114649
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:00</div>
+          <div class="tl-body">Breakfast at hotel.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">10:30</div>
+          <div class="tl-body">Guide at hotel — private half-day boat tour on Como Lake.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:30</div>
+          <div class="tl-body">Visit <strong>Villa del Balbianello</strong>.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">1:00</div>
+          <div class="tl-body">End tour — transfer by boat to Varenna. Arrival and lunch a la carte at <strong>Victoria Grill</strong> (booked under "Kirk Family").</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">2:30</div>
+          <div class="tl-body">Visit Varenna village — free time.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">4:00</div>
+          <div class="tl-body">Return transfer by boat.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">5:00</div>
+          <div class="tl-body">Arrival at hotel — rest of day at leisure — free dinner at client care.</div>
+        </div>
+      </div>
+      <div class="restaurant">
+        <div class="restaurant-accent"></div>
+        <div class="restaurant-body">
+          <div class="restaurant-label">Lunch Restaurant</div>
+          <div class="restaurant-name">Victoria Grill — Royal Victoria Hotel</div>
+          <div class="restaurant-info">Piazza San Giorgio 2, Varenna (LC) &nbsp;·&nbsp; +39 0341 815111<br>Reservation: "Kirk Family"</div>
+        </div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation — last night</div>
+          <div class="hotel-name">Villa d'Este Hotel — Cernobbio, Lake Como</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 8 — DAY 8: DEPARTURE + INVESTMENT                           ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Departure &amp; Investment</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 8 -->
+    <div class="day-section" style="margin-bottom: 28px;">
+      <div class="day-label">
+        <span class="day-number">08</span>
+        <span class="day-date">Saturday, July 19</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Departure — Cernobbio → Milan Linate Airport</div>
+      <div class="guide-line">
+        <span class="guide-tag">Assistant</span>
+        Fiorella Casartelli &nbsp;·&nbsp; +39 348 5114649
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">9:00</div>
+          <div class="tl-body">Breakfast at hotel — meet with assistant and driver (16-seat minibus) for transfer to Milan Linate Airport.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">10:20</div>
+          <div class="tl-body">Arrival at Milan Linate. <strong>Private Flight Terminal: Prime Terminal</strong>, V.le dell'Aviazione 65, Milan (detached from main terminal).<br>
+          Assistant calls <strong>AVIAVIP</strong> (+39 34 8434 5326) 15 min before arrival to alert porter team.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:00</div>
+          <div class="tl-body">Porter service at private terminal — flight departure. <strong>End of Motivation services.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment summary (compact) -->
+    <div style="border-top: 1px solid var(--border); padding-top: 22px;">
+      <div class="section-eyebrow">Pricing &amp; Inclusions</div>
+      <div class="price-block">
+        <div>
+          <div class="price-label">Total Program Cost</div>
+          <div class="price-amount">Upon request</div>
+          <div class="price-note">Quote provided separately · 8 guests</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="price-label">Duration</div>
+          <div class="price-nights">7 nights · Jul 12–19, 2025</div>
+          <div class="price-note">Genoa · Portofino · Milan · Lake Como</div>
+        </div>
+      </div>
+
+      <div class="inclusions-grid">
+        <div>
+          <div class="col-title">Included in the program</div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>All private guided excursions throughout the program</span></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>Private boat excursions: Camogli/San Fruttuoso &amp; Como Lake</span></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>All private road transfers (minivans/minibus)</span></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>All pre-booked restaurant reservations as per program</span></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>VIP meet &amp; greet and porter services at Genoa &amp; Milan Linate</span></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><span>Emotional Pesto experience at Creattivando, Genoa</span></div>
+        </div>
+        <div>
+          <div class="col-title">Not included</div>
+          <div class="item-row"><div class="item-bullet-no"></div><span>International flights and private jet costs</span></div>
+          <div class="item-row"><div class="item-bullet-no"></div><span>Hotel accommodation (billed directly by hotels)</span></div>
+          <div class="item-row"><div class="item-bullet-no"></div><span>Dinners at client's discretion (as noted per day)</span></div>
+          <div class="item-row"><div class="item-bullet-no"></div><span>Personal expenses and gratuities</span></div>
+          <div class="item-row"><div class="item-bullet-no"></div><span>Travel insurance</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">Kirk Family · Portofino &amp; Lake Como, July 2025</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+</body>
+</html>

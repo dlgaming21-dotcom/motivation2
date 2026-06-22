@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alessandro &amp; Sara — Italy by Motivation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:        #1C2448;
+      --magenta:     #D61B7A;
+      --cream:       #F7F4EF;
+      --warm-white:  #FAFAF8;
+      --text:        #1A1A1A;
+      --text-muted:  #6B6B6B;
+      --border:      #E5E0D8;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* COVER */
+    .cover { background: var(--navy); }
+
+    .cover-header {
+      padding: 38px 52px 0;
+      flex-shrink: 0;
+    }
+
+    .cover-logo { height: 28px; }
+
+    .cover-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 52px 52px;
+      position: relative;
+    }
+
+    .cover-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #253068 0%, #1C2448 45%, #111830 100%);
+      opacity: 0.8;
+    }
+
+    .cover-rule {
+      position: absolute;
+      left: 52px;
+      top: 80px;
+      bottom: 100px;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
+      opacity: 0.6;
+    }
+
+    .cover-content {
+      position: relative;
+      z-index: 1;
+      padding-left: 20px;
+    }
+
+    .cover-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 14px;
+    }
+
+    .cover-destination {
+      font-family: 'Playfair Display', serif;
+      font-size: 54px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.08;
+      letter-spacing: -1px;
+      margin-bottom: 28px;
+    }
+
+    .cover-divider {
+      width: 44px;
+      height: 2px;
+      background: rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+
+    .cover-client {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .cover-dates {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 20px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .cover-footer {
+      flex-shrink: 0;
+      padding: 18px 52px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cover-footer-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--magenta);
+    }
+
+    .cover-footer-text {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* INTERIOR */
+    .interior { background: var(--warm-white); }
+
+    .page-header {
+      flex-shrink: 0;
+      background: var(--navy);
+      padding: 16px 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-header-logo { height: 18px; }
+
+    .page-header-label {
+      font-size: 9px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .page-content {
+      flex: 1;
+      overflow: hidden;
+      padding: 36px 52px 20px;
+    }
+
+    .page-footer {
+      flex-shrink: 0;
+      padding: 14px 52px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-footer-text {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* DAY SECTION */
+    .day-section + .day-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .day-label {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .day-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      font-weight: 400;
+      color: var(--navy);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .day-date {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .day-accent {
+      width: 36px;
+      height: 2px;
+      background: var(--magenta);
+      margin-bottom: 9px;
+    }
+
+    .day-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      color: var(--navy);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .day-description {
+      font-size: 12px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin-bottom: 12px;
+    }
+
+    .experience-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 11px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .chip-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--magenta);
+      flex-shrink: 0;
+    }
+
+    .hotel-block {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hotel-block-accent {
+      width: 3px;
+      background: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .hotel-block-body { padding: 10px 16px; }
+
+    .hotel-label {
+      font-size: 8.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .hotel-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    .hotel-location {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- PAGE 1 — COVER -->
+<div class="page cover">
+
+  <div class="cover-header">
+    <img class="cover-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+  </div>
+
+  <div class="cover-hero">
+    <div class="cover-bg"></div>
+    <div class="cover-rule"></div>
+
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">Milan · Florence<br>· Rome</div>
+      <div class="cover-divider"></div>
+      <div class="cover-client">Prepared for Andrew Harper &mdash; Re: Alessandro &amp; Sara</div>
+      <div class="cover-dates">October 22 — October 31, 2026</div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span class="cover-footer-text">9 Nights</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">2 Guests</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- PAGE 2 — Days 1–2 (Milan) -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Day 1 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">01</span>
+        <span class="day-date">Thursday, October 22 · Milan</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Arrival — The City of Style</div>
+      <div class="day-description">
+        Your private driver meets you at Malpensa with a dedicated meet-and-greet, then whisks you in
+        absolute comfort to the heart of the Brera district. The afternoon belongs to Milan's most
+        iconic stage set: a leisurely private walking tour through the soaring Duomo, the gilded
+        arcades of the Galleria Vittorio Emanuele II, and the world-famous foyer of Teatro alla Scala.
+        The evening is yours to settle in and savour an aperitivo in the golden light of the Bulgari garden bar.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>VIP Arrival Assistance — Malpensa</div>
+        <div class="chip"><div class="chip-dot"></div>Private Walking Tour — Duomo &amp; Galleria</div>
+        <div class="chip"><div class="chip-dot"></div>Teatro alla Scala Discovery</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Bulgari Hotel Milano</div>
+          <div class="hotel-location">Via Privata Fratelli Gabba 7b, Milan · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">02</span>
+        <span class="day-date">Friday, October 23 · Milan</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Leonardo's Milan — Art, Genius &amp; Brera</div>
+      <div class="day-description">
+        The morning opens with one of Italy's most coveted cultural experiences: a private reserved
+        visit to the Cenacolo Vinciano, where Leonardo da Vinci's Last Supper glows in its restored
+        glory, followed by an immersive journey through the Museo Nazionale della Scienza e Tecnologia.
+        In the afternoon, your guide leads you through the medieval courtyards of Castello Sforzesco
+        and into the bohemian streets of Brera — Milan's art quarter — where galleries, artisan
+        boutiques and excellent trattorias await at every turn.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Private Visit — Cenacolo Vinciano (Last Supper)</div>
+        <div class="chip"><div class="chip-dot"></div>Castello Sforzesco &amp; Pinacoteca</div>
+        <div class="chip"><div class="chip-dot"></div>Brera Quarter Walking Tour</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Bulgari Hotel Milano</div>
+          <div class="hotel-location">Via Privata Fratelli Gabba 7b, Milan · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">Alessandro &amp; Sara · Milan · Florence · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- PAGE 3 — Days 3–4 (Milan → Florence) -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Day 3 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">03</span>
+        <span class="day-date">Saturday, October 24 · Milan → Florence</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Quadrilatero della Moda &amp; the Road to Tuscany</div>
+      <div class="day-description">
+        A leisurely morning in Milan's Golden Quadrilateral — Armani, Versace, Prada — just a
+        stroll from the Bulgari. Your personal assistant manages the luggage transfer to the
+        private vehicle that delivers you to Milano Centrale for the high-speed Frecciarossa.
+        Two hours later, Florence unfolds through the carriage window and your driver is waiting
+        on the platform side to escort you directly to the hotel on the Lungarno.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Quadrilatero della Moda — Morning at Leisure</div>
+        <div class="chip"><div class="chip-dot"></div>Private Transfer to Milano Centrale</div>
+        <div class="chip"><div class="chip-dot"></div>Frecciarossa — Milan to Florence</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel Plaza Lucchesi</div>
+          <div class="hotel-location">Lungarno della Zecca Vecchia 38, Florence · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">04</span>
+        <span class="day-date">Sunday, October 25 · Florence</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">The Renaissance Awakens — Uffizi &amp; Ponte Vecchio</div>
+      <div class="day-description">
+        Your private guide arrives at the hotel to lead an exclusive morning through Florence's
+        timeless heart: the medieval geometry of Piazza della Signoria, the jewellers' bridge of
+        Ponte Vecchio shimmering over the Arno, and skip-the-line entry into the Uffizi Gallery
+        for a curated journey through Botticelli, Raphael and Michelangelo. The afternoon is
+        free to wander at your own pace. In the evening, dinner at the acclaimed
+        Ristorante Francescovini, just steps from Piazza Santa Croce.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Private Guided Tour — Piazza della Signoria</div>
+        <div class="chip"><div class="chip-dot"></div>Skip-the-Line — Uffizi Gallery</div>
+        <div class="chip"><div class="chip-dot"></div>Dinner — Ristorante Francescovini</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel Plaza Lucchesi</div>
+          <div class="hotel-location">Lungarno della Zecca Vecchia 38, Florence · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">Alessandro &amp; Sara · Milan · Florence · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- PAGE 4 — Days 5–6 (Florence) -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Day 5 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">05</span>
+        <span class="day-date">Monday, October 26 · Florence</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Michelangelo, the Duomo &amp; Pitti Palace</div>
+      <div class="day-description">
+        Reserved entry at the Accademia Gallery brings you face to face with Michelangelo's David —
+        an encounter best experienced in the quieter light of October. Your guide then leads you
+        through the gilded marble facade of the Florence Cathedral and Brunelleschi's magnificent
+        dome. After lunch, the afternoon unfolds across the river at Palazzo Pitti and the terraced
+        splendour of the Boboli Gardens, where autumn colours frame one of the most cinematic
+        views in all of Italy.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Reserved Entry — Accademia Gallery (David)</div>
+        <div class="chip"><div class="chip-dot"></div>Florence Cathedral &amp; Brunelleschi's Dome</div>
+        <div class="chip"><div class="chip-dot"></div>Pitti Palace &amp; Boboli Gardens</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel Plaza Lucchesi</div>
+          <div class="hotel-location">Lungarno della Zecca Vecchia 38, Florence · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 6 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">06</span>
+        <span class="day-date">Tuesday, October 27 · Tuscany — Siena &amp; Val d'Orcia</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Into the Heart of Tuscany — Wine, Medieval Towns &amp; Rolling Hills</div>
+      <div class="day-description">
+        A full-day private excursion into the Val d'Orcia — a UNESCO landscape of cypress-lined
+        roads and amber autumn light. Your guide leads you through medieval Siena, including the
+        magnificent Duomo and an authentic Contrada neighbourhood, before continuing to Montalcino
+        for a private Brunello di Montalcino tasting at a prestigious estate. The afternoon brings
+        the Renaissance gem of Pienza, where a light lunch and a stroll through the cathedral
+        piazza close a day that captures the very soul of Tuscany.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Private Tour — Siena Duomo &amp; Contrada</div>
+        <div class="chip"><div class="chip-dot"></div>Brunello di Montalcino — Estate Tasting</div>
+        <div class="chip"><div class="chip-dot"></div>Pienza — Lunch in the Renaissance Piazza</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel Plaza Lucchesi</div>
+          <div class="hotel-location">Lungarno della Zecca Vecchia 38, Florence · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">Alessandro &amp; Sara · Milan · Florence · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- PAGE 5 — Days 7–8 (Florence → Rome) -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Day 7 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">07</span>
+        <span class="day-date">Wednesday, October 28 · Florence → Rome</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Arriving in the Eternal City — Golf Cart at Golden Hour</div>
+      <div class="day-description">
+        Your personal assistant and porter team manage a seamless transfer from the hotel to
+        Santa Maria Novella station. The Frecciarossa delivers you to Rome Termini in under
+        ninety minutes, where a private van and assistant await. Check in at the Hotel de la Ville —
+        steps from the Spanish Steps — before an unmissable late-afternoon experience: an exclusive
+        golf-cart tour of Rome's most iconic monuments, complete with a private photographer
+        capturing candid moments as you glide past the Pantheon, Piazza Navona and Fontana di Trevi.
+        Dinner at the legendary Ristorante Piperno, in the heart of the old Jewish Ghetto.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Frecciarossa Florence → Rome (1h 29m)</div>
+        <div class="chip"><div class="chip-dot"></div>Exclusive Golf Cart Tour with Private Photographer</div>
+        <div class="chip"><div class="chip-dot"></div>Dinner — Ristorante Piperno, Jewish Ghetto</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel de la Ville</div>
+          <div class="hotel-location">Via Sistina 67/69, Rome · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 8 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">08</span>
+        <span class="day-date">Thursday, October 29 · Rome</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Ancient Rome — Colosseum, Forum &amp; the Palatine Hill</div>
+      <div class="day-description">
+        Your expert private guide opens the ancient world with priority access to the Colosseum,
+        followed by a walk through the Roman Forum and up to the Palatine Hill, where emperors
+        once surveyed the city they ruled. The afternoon is reserved for a private visit to the
+        Vatican Museums and the Sistine Chapel — best experienced in the softer October light —
+        before a leisurely crossing through Trastevere's cobblestone lanes for dinner.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Priority Access — Colosseum &amp; Roman Forum</div>
+        <div class="chip"><div class="chip-dot"></div>Palatine Hill — Private Guided Tour</div>
+        <div class="chip"><div class="chip-dot"></div>Vatican Museums &amp; Sistine Chapel</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel de la Ville</div>
+          <div class="hotel-location">Via Sistina 67/69, Rome · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">Alessandro &amp; Sara · Milan · Florence · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- PAGE 6 — Days 9–10 (Rome & Departure) -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Day 9 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">09</span>
+        <span class="day-date">Friday, October 30 · Rome</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">La Dolce Vita — Borghese Gallery &amp; the Spanish Steps</div>
+      <div class="day-description">
+        The Borghese Gallery requires reservations months in advance — yours are secured. A private
+        guide leads you through Bernini's marble masterpieces and Caravaggio's dramatic canvases in
+        one of the world's most intimate museum settings. The afternoon is dedicated to Rome's most
+        elegant neighbourhood: the Spanish Steps, Via Condotti's luxury boutiques, the Trevi Fountain
+        at quieter afternoon hours, and Villa Borghese's gardens ablaze with autumn foliage.
+        A farewell dinner at one of Rome's finest tables closes this extraordinary journey in style.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Reserved Entry — Borghese Gallery (Bernini &amp; Caravaggio)</div>
+        <div class="chip"><div class="chip-dot"></div>Spanish Steps, Via Condotti &amp; Trevi Fountain</div>
+        <div class="chip"><div class="chip-dot"></div>Farewell Gala Dinner — [TO COMPLETE]</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">Hotel de la Ville</div>
+          <div class="hotel-location">Via Sistina 67/69, Rome · Courtesy of Andrew Harper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 10 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">10</span>
+        <span class="day-date">Saturday, October 31 · Departure</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Arrivederci, Italia</div>
+      <div class="day-description">
+        A final Italian breakfast in bed, a last espresso with a view of the Roman rooftops.
+        Your private driver and personal assistant manage the luggage and transfer you in perfect
+        comfort to Fiumicino International Airport — with VIP Departure Assistance arranged
+        for a seamless, stress-free send-off. Italy will call you back.
+      </div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>Late Checkout — Subject to Availability</div>
+        <div class="chip"><div class="chip-dot"></div>Private Transfer to FCO Airport</div>
+        <div class="chip"><div class="chip-dot"></div>VIP Departure Assistance</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">Alessandro &amp; Sara · Milan · Florence · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+</body>
+</html>

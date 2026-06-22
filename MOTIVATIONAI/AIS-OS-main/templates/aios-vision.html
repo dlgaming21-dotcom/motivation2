@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motivation AIOS — Visione del Cervello AI</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:       #1C2448;
+      --magenta:    #D61B7A;
+      --cream:      #F7F4EF;
+      --warm-white: #FAFAF8;
+      --text:       #1A1A1A;
+      --text-muted: #6B6B6B;
+      --border:     #E5E0D8;
+    }
+
+    @page { size: A4; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── COVER PAGE ── */
+    .cover {
+      width: 210mm;
+      height: 297mm;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px 56px 52px;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 480px; height: 480px;
+      border: 80px solid rgba(214,27,122,0.12);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 320px; height: 320px;
+      border: 60px solid rgba(214,27,122,0.08);
+      border-radius: 50%;
+    }
+
+    .cover-top { position: relative; z-index: 1; }
+    .cover-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 8px;
+    }
+    .cover-sub-logo {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .cover-main {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .cover-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 44px;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .cover-title em {
+      color: var(--magenta);
+      font-style: italic;
+    }
+    .cover-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.6);
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .cover-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 24px;
+    }
+    .cover-bottom-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 4px;
+    }
+    .cover-bottom-value {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── CONTENT PAGES ── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 52px 56px;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--navy);
+      padding-bottom: 16px;
+      margin-bottom: 40px;
+    }
+    .page-header-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--navy);
+    }
+    .page-header-section {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--magenta);
+    }
+
+    .section-eyebrow {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--navy);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: 13px;
+      line-height: 1.75;
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      background: var(--cream);
+      border-left: 4px solid var(--magenta);
+      border-radius: 0 8px 8px 0;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: 13px; }
+    .highlight-box strong { color: var(--navy); }
+
+    /* ── CARDS GRID ── */
+    .cards {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .cards-2 { grid-template-columns: 1fr 1fr; }
+    .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .card {
+      background: var(--warm-white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .card-body {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ── PRIORITY LIST ── */
+    .priority-list { margin: 24px 0; }
+    .priority-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .priority-item:last-child { border-bottom: none; }
+    .priority-num {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      background: var(--navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: #fff;
+      margin-top: 2px;
+    }
+    .priority-content {}
+    .priority-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .priority-desc {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ── CONNECTIONS TABLE ── */
+    .conn-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
+    .conn-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+      padding: 8px 12px;
+    }
+    .conn-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .conn-table tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .badge-active { background: #e6f4ea; color: #2d7a3a; }
+    .badge-planned { background: #fff3e0; color: #b45309; }
+    .badge-manual { background: #f0f0f0; color: #666; }
+
+    /* ── SKILL BLOCKS ── */
+    .skill-block {
+      background: var(--navy);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .skill-command {
+      flex-shrink: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--magenta);
+      background: rgba(214,27,122,0.15);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+    .skill-info {}
+    .skill-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .skill-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ── QUOTE ── */
+    .quote {
+      border-top: 3px solid var(--magenta);
+      padding: 28px 0 0;
+      margin-top: 32px;
+    }
+    .quote-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--navy);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .quote-source {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .footer-date {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .spacer { flex: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     COVER
+════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-logo">Motivation m.i.c.e. srl</div>
+    <div class="cover-sub-logo">Tour Operator Incoming Italia · Premium Luxury</div>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-eyebrow">Documento interno — Giugno 2026</div>
+    <div class="cover-title">
+      Il <em>Cervello AI</em><br>di Motivation
+    </div>
+    <div class="cover-desc">
+      Visione, architettura e roadmap dell'AI Operating System costruito per accelerare proposte, coordinamento fornitori e gestione operativa.
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div>
+      <div class="cover-bottom-label">Sistema</div>
+      <div class="cover-bottom-value">Motivation AIOS</div>
+    </div>
+    <div>
+      <div class="cover-bottom-label">Fase</div>
+      <div class="cover-bottom-value">Onboarding completato — Q3 attivo</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="cover-bottom-label">Data</div>
+      <div class="cover-bottom-value">21 Giugno 2026</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 1 — COS'È L'AIOS
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Visione</div>
+  </div>
+
+  <div class="section-eyebrow">01 — Cos'è</div>
+  <div class="section-title">Un operatore invisibile<br>sempre al lavoro</div>
+
+  <p>
+    L'<strong>AI Operating System di Motivation</strong> è un cervello digitale costruito su misura per l'agenzia. Non è un chatbot generico — è un sistema che conosce i clienti di Motivation, i fornitori, i viaggi passati, le preferenze e i processi operativi.
+  </p>
+  <p>
+    Il suo scopo è uno solo: <strong>liberare l'operatore dal lavoro ripetitivo</strong> — bozze di proposte, richieste ai fornitori, aggiornamenti di stato — in modo che il suo tempo resti concentrato sulle decisioni di qualità e sulla relazione con le agenzie partner.
+  </p>
+
+  <div class="highlight-box">
+    <p><strong>La premessa di base:</strong> ogni proposta scritta da zero, ogni email ai fornitori, ogni scheda viaggio aggiornata a mano è un'ora persa. L'AIOS porta quella stessa qualità in minuti, attingendo alla conoscenza già accumulata da Motivation.</p>
+  </div>
+
+  <div class="cards cards-2" style="margin-top:28px;">
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">Thought Partner</div>
+      <p class="card-body">Aiuta a pensare e decidere più velocemente — non sostituisce il giudizio dell'operatore, lo amplifica.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">Motore Operativo</div>
+      <p class="card-body">Genera documenti, cerca nei database, invia richieste. Lavora su istruzione, non su iniziativa.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📚</div>
+      <div class="card-title">Memoria Aziendale</div>
+      <p class="card-body">Ricorda ogni viaggio, cliente e fornitore indicizzato — e impara man mano che il database cresce.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Sistema Vivo</div>
+      <p class="card-body">Si espande ogni settimana tramite il rituale <code>/level-up</code> — un'automazione nuova ogni settimana.</p>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 2 — IL BUSINESS E IL MODELLO B2B
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Contesto Business</div>
+  </div>
+
+  <div class="section-eyebrow">02 — Chi è Motivation</div>
+  <div class="section-title">DMC italiano di lusso,<br>modello B2B</div>
+
+  <p>
+    <strong>Motivation m.i.c.e. srl</strong> è un Destination Management Company (DMC) specializzato in Italia. Progetta e gestisce tour tailor-made nelle destinazioni più iconiche del paese: Roma, Toscana, Costiera Amalfitana, Venezia, Sicilia, Portofino.
+  </p>
+  <p>
+    Il cliente tipo è <strong>HNWI (High Net Worth Individual)</strong> — over 65, forte passione per l'Italia, standard altissimi. Ma Motivation non parla quasi mai direttamente con i viaggiatori. Il suo interlocutore diretto è <strong>l'agenzia di viaggio americana</strong>, che funge da partner commerciale.
+  </p>
+
+  <div class="highlight-box">
+    <p><strong>Modello operativo:</strong> L'agenzia americana porta la richiesta → Motivation costruisce il programma → l'agenzia lo presenta al proprio cliente finale. La proposta va all'agenzia, i prezzi vengono inviati separatamente. Tono: aspirazionale e luxury, perché l'agenzia la mostra al viaggiatore.</p>
+  </div>
+
+  <p>
+    La rete operativa di Motivation è costruita su fornitori selezionati: hotel di lusso, ristoranti stellati, guide private, autisti NCC, esperienze esclusive. <strong>Un fornitore che delude equivale a un cliente perso.</strong>
+  </p>
+
+  <div class="cards cards-3" style="margin-top:12px;">
+    <div class="card">
+      <div class="card-title" style="font-size:13px;">Chi riceve<br>le proposte</div>
+      <p class="card-body">Agenzie di viaggio americane (partner B2B)</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:13px;">Chi viaggia</div>
+      <p class="card-body">HNWI e gruppi Premium Luxury, over 65</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:13px;">Revenue</div>
+      <p class="card-body">Pacchetti tailor-made. Tracking ancora su Excel.</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    <div class="quote-text">"Ogni viaggio è costruito su misura attorno alle esigenze e ai desideri del cliente — e l'AI deve conoscere quel viaggio quanto lo conosce l'operatore."</div>
+    <div class="quote-source">— Principio guida del Motivation AIOS</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 — ARCHITETTURA
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Architettura</div>
+  </div>
+
+  <div class="section-eyebrow">03 — Come è fatto</div>
+  <div class="section-title">Due cervelli,<br>una sola risposta</div>
+
+  <p>
+    L'AIOS opera con un protocollo chiaro: prima cerca nei database aziendali, poi risponde. Mai il contrario. Ogni domanda su un cliente, un viaggio, un fornitore o una struttura viene classificata e instradata verso lo strumento giusto.
+  </p>
+
+  <div style="background:var(--navy); border-radius:12px; padding:28px 32px; margin:20px 0;">
+    <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:20px;">Protocollo query aziendale</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div>
+        <div style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--magenta); margin-bottom:8px;">Domanda semantica</div>
+        <div style="font-size:13px; color:#fff; font-weight:500; margin-bottom:6px;">→ Ragie.ai</div>
+        <div style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.6;">Clienti, viaggi, programmi, strutture, feedback, preferenze, contatti. Ricerca semantica su Google Drive.</div>
+      </div>
+      <div>
+        <div style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--magenta); margin-bottom:8px;">Domanda strutturata</div>
+        <div style="font-size:13px; color:#fff; font-weight:500; margin-bottom:6px;">→ Airtable</div>
+        <div style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.6;">Conteggi, totali, fatturato, elenchi, filtri per data e stato. Database TravelAgencyDB.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:13px; font-weight:600; color:var(--navy); margin:24px 0 14px;">Registro connessioni</div>
+
+  <table class="conn-table">
+    <tr>
+      <th>Sistema</th>
+      <th>Strumento</th>
+      <th>Stato</th>
+    </tr>
+    <tr>
+      <td><strong>Ragie.ai + Google Drive</strong><br><span style="color:var(--text-muted)">RAG semantico su tutti i file aziendali</span></td>
+      <td>Script PowerShell</td>
+      <td><span class="badge badge-active">Attivo ✓</span></td>
+    </tr>
+    <tr>
+      <td><strong>Airtable TravelAgencyDB</strong><br><span style="color:var(--text-muted)">Clienti, Prenotazioni, Strutture, Fornitori, Fatture</span></td>
+      <td>MCP Server</td>
+      <td><span class="badge badge-planned">Da completare</span></td>
+    </tr>
+    <tr>
+      <td><strong>Gmail</strong><br><span style="color:var(--text-muted)">Email con agenzie e fornitori (migrazione da Outlook)</span></td>
+      <td>MCP Server</td>
+      <td><span class="badge badge-planned">Pianificato</span></td>
+    </tr>
+    <tr>
+      <td><strong>Google Calendar</strong><br><span style="color:var(--text-muted)">Timeline viaggi e appuntamenti</span></td>
+      <td>MCP Server</td>
+      <td><span class="badge badge-planned">Pianificato</span></td>
+    </tr>
+    <tr>
+      <td><strong>Revenue / Fatturato</strong><br><span style="color:var(--text-muted)">Tracking finanziario</span></td>
+      <td>Excel (manuale)</td>
+      <td><span class="badge badge-manual">Manuale</span></td>
+    </tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 4 — SKILL ATTIVE
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Skill Attive</div>
+  </div>
+
+  <div class="section-eyebrow">04 — Cosa sa fare oggi</div>
+  <div class="section-title">Quattro skill,<br>già operative</div>
+
+  <p>
+    L'AIOS non è un progetto futuro — <strong>funziona adesso</strong>. Le skill sono comandi che l'operatore lancia in conversazione. Ogni skill ha un obiettivo preciso, un input atteso e un output concreto.
+  </p>
+
+  <div style="margin-top:24px;">
+    <div class="skill-block">
+      <div class="skill-command">/proposal</div>
+      <div class="skill-info">
+        <div class="skill-title">Proposta viaggio in PDF</div>
+        <p class="skill-desc">Cerca il programma in Ragie, compila il template HTML luxury con i dati del cliente, converte in PDF e lo apre. Dall'istruzione al PDF in pochi minuti. Già prodotto: Kirk Family, Coppia Amalfi-Roma-Venezia.</p>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-command">/audit</div>
+      <div class="skill-info">
+        <div class="skill-title">Report gap del sistema</div>
+        <p class="skill-desc">Analizza lo stato dell'AIOS secondo il framework Four-Cs e restituisce un report con i top-3 gap da colmare, ordinati per impatto. Da eseguire a Day 7, poi settimanalmente.</p>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-command">/level-up</div>
+      <div class="skill-info">
+        <div class="skill-title">Nuova automazione ogni settimana</div>
+        <p class="skill-desc">Intervista 3Ms (Mindset → Method → Machine): trova il task manuale più ripetuto, sceglie un'automazione fattibile in 1 settimana, la costruisce e la spedisce. Un'automazione a settimana, composta nel tempo.</p>
+      </div>
+    </div>
+
+    <div class="skill-block">
+      <div class="skill-command">/onboard</div>
+      <div class="skill-info">
+        <div class="skill-title">Setup e aggiornamento del sistema</div>
+        <p class="skill-desc">Legge l'intake aziendale e aggiorna tutti i file di contesto. Da rieseguire ogni volta che cambia qualcosa di rilevante: nuove priorità, nuovo stack, nuovi mercati.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 5 — ROADMAP Q3 2026
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Roadmap Q3 2026</div>
+  </div>
+
+  <div class="section-eyebrow">05 — Dove andiamo</div>
+  <div class="section-title">Tre obiettivi,<br>entro settembre</div>
+
+  <p>
+    Il Q3 ha un fuoco chiaro: portare a zero il tempo manuale sulle tre operazioni più pesanti — proposta, coordinamento fornitori, tracking operativo. Questi sono i tre pain point che consumano più ore per viaggio.
+  </p>
+
+  <div class="priority-list">
+    <div class="priority-item">
+      <div class="priority-num">1</div>
+      <div class="priority-content">
+        <div class="priority-title">Proposta automatica al cliente</div>
+        <p class="priority-desc">Generare automaticamente proposte viaggio personalizzate basandosi sulla conoscenza passata — viaggi precedenti, preferenze, feedback — e sui requisiti del nuovo cliente. Dall'input dell'agenzia al PDF pronto, in pochi minuti. La skill <code>/proposal</code> è già attiva. Il Q3 la rende ancora più veloce e accurata man mano che il database Ragie cresce.</p>
+      </div>
+    </div>
+
+    <div class="priority-item">
+      <div class="priority-num">2</div>
+      <div class="priority-content">
+        <div class="priority-title">Richieste automatiche ai fornitori</div>
+        <p class="priority-desc">Inviare in automatico richieste di disponibilità e preventivo a hotel, ristoranti, guide e autisti NCC — in base al programma proposto e alle date del viaggio. Nessuna email scritta a mano. Il sistema conosce i fornitori, le date e il profilo cliente; compone e invia.</p>
+      </div>
+    </div>
+
+    <div class="priority-item">
+      <div class="priority-num">3</div>
+      <div class="priority-content">
+        <div class="priority-title">Tracking stato viaggio</div>
+        <p class="priority-desc">Raccogliere le conferme scritte dei fornitori e riassumere lo stato operativo del viaggio in un documento di project management aggiornato. L'operatore vede a colpo d'occhio cosa è confermato, cosa è in attesa, cosa manca. Nessun foglio Excel manuale.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:28px;">
+    <p><strong>Il principio:</strong> ogni settimana, con <code>/level-up</code>, una nuova automazione si aggiunge al sistema. Le tre priorità Q3 non arrivano tutte insieme — crescono iterazione dopo iterazione, compounding nel tempo.</p>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 6 — LA FILOSOFIA (3Ms)
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-brand">Motivation AIOS</div>
+    <div class="page-header-section">Filosofia</div>
+  </div>
+
+  <div class="section-eyebrow">06 — Il metodo</div>
+  <div class="section-title">The Three Ms<br>of AI™</div>
+
+  <p>
+    L'AIOS è costruito attorno al framework <strong>Three Ms</strong> — il modo in cui l'operatore pensa, decide e costruisce con l'AI. Non è teoria: è il ritmo settimanale del sistema.
+  </p>
+
+  <div class="cards cards-3" style="margin:28px 0;">
+    <div class="card" style="border-top:3px solid var(--navy);">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">Mindset</div>
+      <p class="card-body">Come pensare al lavoro con l'AI. Identifica dove si nasconde la leva — i task ripetuti, i documenti scritti da zero, le ore perse su operazioni che il sistema potrebbe fare.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--magenta);">
+      <div class="card-icon">📐</div>
+      <div class="card-title">Method</div>
+      <p class="card-body">Come decidere cosa automatizzare. Non tutto alla volta — una cosa alla settimana, la più impattante, quella fattibile in 7 giorni. Scope piccolo, risultato reale.</p>
+    </div>
+    <div class="card" style="border-top:3px solid #2d7a3a;">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">Machine</div>
+      <p class="card-body">Come costruire. Skill, script, connessioni, template. Ogni pezzo che entra nel sistema rimane — non si ricomincia, si compone.</p>
+    </div>
+  </div>
+
+  <p>
+    Il <strong>rituale settimanale</strong> è semplice: ogni settimana si esegue <code>/level-up</code>. Il sistema intervista l'operatore secondo i 3Ms, identifica il candidato più prezioso, costruisce l'automazione e la spedisce. Una alla settimana. In un anno: 52 automazioni in più rispetto a partire da zero.
+  </p>
+
+  <div class="highlight-box">
+    <p><strong>Default Shift:</strong> ogni volta che arriva un task nuovo, la prima domanda non è "come lo faccio?" ma "in che misura potrebbe essere sfruttata l'AI qui?" L'AIOS lo ricorda all'operatore ad ogni interazione.</p>
+  </div>
+
+  <div class="quote" style="margin-top:24px;">
+    <div class="quote-text">"Your AIOS structure should look like a small, well-run business — not a hoarder's basement."</div>
+    <div class="quote-source">— Principio di design del sistema AIOS</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="page-footer">
+    <div class="footer-brand">Motivation AIOS — Documento Interno · Confidenziale</div>
+    <div class="footer-date">Giugno 2026</div>
+  </div>
+</div>
+
+</body>
+</html>

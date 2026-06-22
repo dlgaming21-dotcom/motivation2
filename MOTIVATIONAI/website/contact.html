@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Motivation</title>
+  <meta name="description" content="Start planning your Italian journey with Motivation. Contact our expert travel planners today." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <style>
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .contact-info { position: sticky; top: calc(var(--nav-h) + 40px); }
+    .contact-info h2 { margin-bottom: 16px; }
+    .contact-info > p { margin-bottom: 40px; font-size: 0.95rem; }
+    .contact-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .contact-detail__item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .contact-detail__icon {
+      width: 40px;
+      height: 40px;
+      background: var(--grey-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .contact-detail__text strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--grey-mid);
+      margin-bottom: 4px;
+    }
+    .contact-detail__text a,
+    .contact-detail__text span {
+      font-size: 0.95rem;
+      color: var(--black);
+    }
+    .contact-detail__text a:hover { color: var(--magenta); }
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--grey-border);
+      border-radius: var(--radius);
+      padding: 48px;
+    }
+    .form-card h3 { margin-bottom: 8px; }
+    .form-card > p { font-size: 0.9rem; margin-bottom: 32px; }
+    .form-submit { margin-top: 8px; }
+    @media (max-width: 768px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+      .contact-info { position: static; }
+      .form-card { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__logo">Motiv<span>a</span>tion</a>
+      <ul class="navbar__menu">
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="luxury-travel.html">Luxury Travel</a></li>
+        <li><a href="unique-experiences.html">Unique Experiences</a></li>
+        <li><a href="event-management.html">Event Management</a></li>
+        <li><a href="dmc.html">DMC</a></li>
+      </ul>
+      <a href="contact.html" class="btn btn--magenta navbar__cta">Contact Us</a>
+      <button class="navbar__hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="navbar__mobile">
+    <a href="about.html">About Us</a>
+    <a href="luxury-travel.html">Luxury Travel</a>
+    <a href="unique-experiences.html">Unique Experiences</a>
+    <a href="event-management.html">Event Management</a>
+    <a href="dmc.html">DMC</a>
+    <a href="contact.html" class="btn btn--magenta">Contact Us</a>
+  </div>
+
+  <!-- ══ PAGE HERO ══ -->
+  <div class="page-hero">
+    <div class="page-hero__bg">
+      <img
+        src="https://images.unsplash.com/photo-1533760881669-80db4d7b341d?w=1600&q=80&auto=format&fit=crop"
+        alt="Italy contact Motivation"
+      />
+    </div>
+    <div class="page-hero__content">
+      <p class="label">We're Here</p>
+      <h1>Contact Us</h1>
+    </div>
+  </div>
+
+  <!-- ══ CONTACT ══ -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <!-- Left: info -->
+        <div class="contact-info fade-in">
+          <p class="label">Get In Touch</p>
+          <div class="divider"></div>
+          <h2>Let's Start Planning</h2>
+          <p>Tell us about your vision. Our team will respond within 24 hours with ideas, questions, and next steps. Every great Italian journey begins with a conversation.</p>
+
+          <div class="contact-detail">
+            <div class="contact-detail__item">
+              <div class="contact-detail__icon">✉</div>
+              <div class="contact-detail__text">
+                <strong>Email</strong>
+                <a href="mailto:info@motivation.it">info@motivation.it</a>
+              </div>
+            </div>
+            <div class="contact-detail__item">
+              <div class="contact-detail__icon">◎</div>
+              <div class="contact-detail__text">
+                <strong>Response Time</strong>
+                <span>Within 24 hours</span>
+              </div>
+            </div>
+            <div class="contact-detail__item">
+              <div class="contact-detail__icon">✦</div>
+              <div class="contact-detail__text">
+                <strong>Coverage</strong>
+                <span>All of Italy</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--grey-light);border-radius:4px;padding:28px">
+            <p class="label" style="margin-bottom:12px">For Travel Agencies</p>
+            <p style="font-size:0.88rem;color:#4A4A4A">If you're a premium travel agency looking for a DMC partner in Italy, please mention your agency name and we'll schedule a dedicated call.</p>
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="form-card fade-in">
+          <h3>Send Us a Message</h3>
+          <p>Fill in the details below and we'll be in touch shortly.</p>
+
+          <form action="mailto:info@motivation.it" method="post" enctype="text/plain">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="first-name">First Name *</label>
+                <input type="text" id="first-name" name="first_name" required placeholder="John" />
+              </div>
+              <div class="form-group">
+                <label for="last-name">Last Name *</label>
+                <input type="text" id="last-name" name="last_name" required placeholder="Smith" />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="john@example.com" />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" />
+              </div>
+              <div class="form-group form-group--full">
+                <label for="interest">I'm interested in</label>
+                <select id="interest" name="interest">
+                  <option value="">Select a service...</option>
+                  <option value="luxury-travel">Luxury Travel</option>
+                  <option value="unique-experiences">Unique Experiences</option>
+                  <option value="incentive-travel">Incentive Travel</option>
+                  <option value="meetings">Meetings &amp; Conferences</option>
+                  <option value="team-building">Team Building</option>
+                  <option value="dmc">DMC Partnership</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="travel-dates">Approximate Travel Dates</label>
+                <input type="text" id="travel-dates" name="travel_dates" placeholder="e.g. May 2025, 10 days" />
+              </div>
+              <div class="form-group">
+                <label for="group-size">Group Size</label>
+                <input type="text" id="group-size" name="group_size" placeholder="e.g. 2 adults, 1 family of 4" />
+              </div>
+              <div class="form-group form-group--full">
+                <label for="message">Tell Us About Your Vision *</label>
+                <textarea id="message" name="message" required placeholder="Describe your ideal Italian journey — destinations, experiences, style of travel, any special occasions..."></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--magenta form-submit" style="width:100%;text-align:center;margin-top:24px">Send Message</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand">Motiv<span>a</span>tion</div>
+          <p class="footer__tagline">Italy's premier incoming luxury operator. Crafting extraordinary journeys for extraordinary travelers since 2004.</p>
+          <div class="footer__social">
+            <a href="#" aria-label="Instagram">In</a>
+            <a href="#" aria-label="LinkedIn">Li</a>
+            <a href="#" aria-label="Facebook">Fb</a>
+          </div>
+        </div>
+        <div class="footer__col">
+          <h5>Services</h5>
+          <ul>
+            <li><a href="luxury-travel.html">Luxury Travel</a></li>
+            <li><a href="unique-experiences.html">Unique Experiences</a></li>
+            <li><a href="event-management.html">Event Management</a></li>
+            <li><a href="dmc.html">DMC Services</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="mailto:info@motivation.it">info@motivation.it</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>&copy; 2024 Motivation. All rights reserved.</span>
+        <span>Luxury Travel &amp; Incentive Specialists · Italy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

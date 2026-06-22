@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[TO COMPLETE — Client Name] — Amalfi · Rome · Venice by Motivation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy:       #1C2448;
+      --magenta:    #D61B7A;
+      --cream:      #F7F4EF;
+      --warm-white: #FAFAF8;
+      --text:       #1A1A1A;
+      --text-muted: #6B6B6B;
+      --border:     #E5E0D8;
+    }
+
+    @page { size: A4; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page shell ─────────────────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Cover ──────────────────────────────────────────────────────── */
+    .cover { background: var(--navy); }
+    .cover-header { padding: 38px 52px 0; flex-shrink: 0; }
+    .cover-logo { height: 28px; }
+    .cover-hero {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 52px 52px; position: relative;
+    }
+    .cover-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #253068 0%, #1C2448 45%, #111830 100%);
+      opacity: 0.8;
+    }
+    .cover-rule {
+      position: absolute; left: 52px; top: 80px; bottom: 100px; width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
+      opacity: 0.6;
+    }
+    .cover-content { position: relative; z-index: 1; padding-left: 20px; }
+    .cover-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--magenta); margin-bottom: 14px; }
+    .cover-destination { font-family: 'Playfair Display', serif; font-size: 50px; font-weight: 600; color: #fff; line-height: 1.08; letter-spacing: -1px; margin-bottom: 28px; }
+    .cover-divider { width: 44px; height: 2px; background: rgba(255,255,255,0.2); margin-bottom: 20px; }
+    .cover-client { font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.55); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .cover-dates { font-family: 'Playfair Display', serif; font-style: italic; font-size: 20px; color: rgba(255,255,255,0.9); }
+    .cover-footer { flex-shrink: 0; padding: 18px 52px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 14px; }
+    .cover-footer-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--magenta); }
+    .cover-footer-text { font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* ── Interior shell ─────────────────────────────────────────────── */
+    .interior { background: var(--warm-white); }
+    .page-header { flex-shrink: 0; background: var(--navy); padding: 15px 52px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header-logo { height: 18px; }
+    .page-header-label { font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.4); letter-spacing: 2.5px; text-transform: uppercase; }
+    .page-content { flex: 1; overflow: hidden; padding: 32px 52px 18px; }
+    .page-footer { flex-shrink: 0; padding: 12px 52px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .page-footer-text { font-size: 9px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── Guests page ────────────────────────────────────────────────── */
+    .section-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--magenta); margin-bottom: 8px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--navy); margin-bottom: 20px; }
+
+    .guests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    .guest-row { background: #fff; border: 1px solid var(--border); padding: 9px 14px; }
+    .guest-name { font-size: 12.5px; font-weight: 500; color: var(--navy); }
+    .guest-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .contacts-row { display: flex; gap: 20px; margin-bottom: 18px; }
+    .contact-item { background: #fff; border: 1px solid var(--border); padding: 9px 14px; flex: 1; }
+    .contact-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .contact-name { font-size: 12px; font-weight: 500; color: var(--navy); }
+    .contact-phone { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+    .note-box { background: var(--cream); border-left: 3px solid var(--border); padding: 11px 16px; font-size: 11.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 14px; }
+    .note-box strong { color: var(--text); font-weight: 600; }
+    .note-box.alert { border-left-color: var(--magenta); }
+
+    .info-row { display: flex; gap: 16px; }
+    .info-pill { background: var(--navy); color: #fff; font-size: 10px; padding: 5px 12px; letter-spacing: 1px; text-transform: uppercase; }
+    .info-pill.accent { background: var(--magenta); }
+
+    /* ── Day section ────────────────────────────────────────────────── */
+    .day-section + .day-section { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--border); }
+
+    .day-label { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+    .day-number { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 400; color: var(--navy); line-height: 1; letter-spacing: -1px; }
+    .day-date { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    .day-accent { width: 36px; height: 2px; background: var(--magenta); margin-bottom: 7px; }
+    .day-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 10px; line-height: 1.3; }
+
+    /* Guide line */
+    .guide-line { font-size: 10.5px; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .guide-tag { font-size: 8.5px; letter-spacing: 1.5px; text-transform: uppercase; background: var(--navy); color: rgba(255,255,255,0.7); padding: 2px 7px; }
+
+    /* Timeline */
+    .timeline { margin: 0 0 12px; border: 1px solid var(--border); background: #fff; }
+    .tl-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .tl-row:last-child { border-bottom: none; }
+    .tl-time { min-width: 52px; flex-shrink: 0; font-size: 10.5px; font-weight: 600; color: var(--navy); padding: 6px 10px; background: var(--cream); border-right: 1px solid var(--border); display: flex; align-items: flex-start; padding-top: 7px; }
+    .tl-body { flex: 1; padding: 6px 12px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+    .tl-body strong { color: var(--text); font-weight: 500; }
+
+    /* Restaurant card */
+    .restaurant { display: flex; align-items: stretch; background: #fff; border: 1px solid var(--border); overflow: hidden; margin: 10px 0; }
+    .restaurant-accent { width: 3px; background: var(--magenta); flex-shrink: 0; }
+    .restaurant-body { padding: 9px 14px; }
+    .restaurant-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--magenta); margin-bottom: 3px; }
+    .restaurant-name { font-size: 13px; font-weight: 500; color: var(--navy); }
+    .restaurant-info { font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+
+    /* Hotel block */
+    .hotel-block { display: flex; align-items: stretch; background: #fff; border: 1px solid var(--border); overflow: hidden; margin-top: 10px; }
+    .hotel-block-accent { width: 3px; background: var(--navy); flex-shrink: 0; }
+    .hotel-block-body { padding: 9px 14px; }
+    .hotel-label { font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .hotel-name { font-size: 13px; font-weight: 500; color: var(--navy); }
+    .hotel-location { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Dinner options */
+    .dinner-block { margin-top: 10px; }
+    .dinner-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .dinner-options { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dinner-option { font-size: 11px; color: var(--text-muted); background: #fff; border: 1px solid var(--border); padding: 4px 10px; }
+
+    /* Investment */
+    .price-block { background: var(--navy); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .price-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+    .price-amount { font-family: 'Playfair Display', serif; font-size: 36px; color: #fff; line-height: 1; }
+    .price-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .price-nights { font-family: 'Playfair Display', serif; font-size: 22px; color: #fff; }
+    .inclusions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 20px; }
+    .col-title { font-size: 9.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+    .item-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; }
+    .item-bullet-yes { width: 6px; height: 6px; border-radius: 50%; background: var(--navy); flex-shrink: 0; margin-top: 5px; }
+    .item-bullet-no  { width: 6px; height: 6px; border-radius: 50%; background: var(--border); border: 1.5px solid #bbb; flex-shrink: 0; margin-top: 5px; }
+    .payment-box { background: var(--cream); border-left: 3px solid var(--magenta); padding: 12px 16px; font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+    .payment-box strong { color: var(--text); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 1 — COVER                                                   ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page cover">
+  <div class="cover-header">
+    <img class="cover-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+  </div>
+  <div class="cover-hero">
+    <div class="cover-bg"></div>
+    <div class="cover-rule"></div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">Amalfi, Rome<br>&amp; Venice</div>
+      <div class="cover-divider"></div>
+      <div class="cover-client">Exclusively crafted for [TO COMPLETE — Client Name]</div>
+      <div class="cover-dates">[TO COMPLETE — Dates]</div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <span class="cover-footer-text">7 Nights</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">2 Guests</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">Sorrento · Amalfi Coast · Rome · Venice</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 2 — GUESTS & IMPORTANT NOTES                               ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Guests &amp; Important Notes</span>
+  </div>
+  <div class="page-content">
+
+    <div class="section-eyebrow">Travel Party</div>
+    <div class="section-title">[TO COMPLETE] — 2 Guests</div>
+
+    <div class="guests-grid">
+      <div class="guest-row">
+        <div class="guest-name">[TO COMPLETE — Guest 1 Name]</div>
+        <div class="guest-detail">[TO COMPLETE — DOB]</div>
+      </div>
+      <div class="guest-row">
+        <div class="guest-name">[TO COMPLETE — Guest 2 Name]</div>
+        <div class="guest-detail">[TO COMPLETE — DOB]</div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow" style="margin-bottom: 10px;">Emergency Contacts while Traveling</div>
+    <div class="contacts-row">
+      <div class="contact-item">
+        <div class="contact-label">Guest 1</div>
+        <div class="contact-name">[TO COMPLETE — Name]</div>
+        <div class="contact-phone">[TO COMPLETE — Phone]</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Guest 2</div>
+        <div class="contact-name">[TO COMPLETE — Name]</div>
+        <div class="contact-phone">[TO COMPLETE — Phone]</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">Motivation — On-trip Assistance</div>
+        <div class="contact-name">Motivation m.i.c.e. srl</div>
+        <div class="contact-phone">+39 06 70453905 · info@motivation.it</div>
+      </div>
+    </div>
+
+    <div class="note-box alert">
+      <strong>⚠ Celiac Disease (Gluten Intolerance) —</strong> Both guests are celiac. This is a medical condition, not a preference. All restaurants and venues have been briefed in advance and must prepare meals using <strong>dedicated gluten-free ingredients</strong> with strict protocols to avoid cross-contamination (separate cookware, surfaces, and utensils). Please do not consume any bread, pasta, pizza, fried foods, or sauces that have not been explicitly confirmed gluten-free by the establishment. When in doubt, consult your Motivation assistant before ordering.
+    </div>
+
+    <div class="note-box">
+      <strong>Trip Overview —</strong> This itinerary covers three of Italy's most iconic destinations across 7 nights: 2 nights on the Amalfi Coast (base: Sorrento), 3 nights in Rome, and 2 nights in Venice. Inter-city transfers are by private first-class train. A private driver, local guide, and Motivation assistant are arranged for each destination segment.
+    </div>
+
+    <div class="info-row">
+      <div class="info-pill">7 Nights</div>
+      <div class="info-pill">2 Guests</div>
+      <div class="info-pill accent">Celiac — Gluten Free</div>
+      <div class="info-pill">Private Guides</div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Amalfi · Rome · Venice</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 3 — DAY 1: ARRIVAL + DAY 2: AMALFI COAST                   ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary · Amalfi Coast</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 1 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">01</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Arrival in Naples — Welcome to the South</div>
+      <div class="guide-line">
+        <span class="guide-tag">Driver / Assistant</span>
+        [TO COMPLETE — guide TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">[TIME]</div>
+          <div class="tl-body"><strong>Flight arrival at Naples International Airport (NAP).</strong> VIP assistance — private assistant and driver waiting outside arrivals.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">[TIME]</div>
+          <div class="tl-body"><strong>Private transfer Naples → Sorrento</strong> along the scenic Sorrentine Peninsula (approx. 1 hour). Check-in and rest of the day at leisure.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">PM</div>
+          <div class="tl-body">Upon arrival in Sorrento, we recommend a relaxed stroll along the Corso Italia or a visit to the Terranova Farm for a welcome cheese and mozzarella stretching experience.</div>
+        </div>
+      </div>
+
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Overnight · Night 1 &amp; 2</div>
+          <div class="hotel-name">Hilton Sorrento Palace or similar</div>
+          <div class="hotel-location">Sorrento, Campania</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">02</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">The Amalfi Coast — Positano, Amalfi &amp; Ravello</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide / Driver</span>
+        [TO COMPLETE — guide TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">09:00</div>
+          <div class="tl-body"><strong>Private guide and driver at the hotel.</strong> Morning walking tour of Sorrento highlights: historic center, Villa Communale viewpoint, artisan workshops (limoncello and inlaid woodwork).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:00</div>
+          <div class="tl-body"><strong>Transfer to Positano</strong> by private car along the SS163 — the most scenic stretch of the Amalfi Drive.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:00</div>
+          <div class="tl-body"><strong>Arrival in Positano.</strong> Walking tour of the village: the Church of Santa Maria Assunta, the characteristic stairways, the beach of Fornillo. Lunch at leisure — <em>note: confirm gluten-free options with venue before ordering.</em></div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">14:30</div>
+          <div class="tl-body"><strong>Transfer to Ravello</strong> — "the city of music" perched 350m above the sea. Visit Villa Rufolo and its panoramic gardens, and the Belvedere of Infinity.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">16:00</div>
+          <div class="tl-body"><strong>Transfer to Amalfi town.</strong> Visit the Cathedral of Sant'Andrea, the Chiostro del Paradiso, and the historic paper mills (Museo della Carta).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">17:30</div>
+          <div class="tl-body"><strong>Return transfer to Sorrento.</strong> Arrival at hotel, rest of the day at leisure.</div>
+        </div>
+      </div>
+
+      <div class="dinner-block">
+        <div class="dinner-label">Dinner Options — Sorrento (Gluten-Free Confirmed)</div>
+        <div class="dinner-options">
+          <span class="dinner-option">Il Buco — Via II Rampa Marina Piccola 5, Sorrento (Michelin star, excellent GF menu)</span>
+          <span class="dinner-option">Ristorante Tasso — Piazza Tasso 13, Sorrento (traditional, GF pasta available)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Amalfi Coast</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 4 — DAY 3: TRANSFER TO ROME + DAY 4: ROME                  ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary · Rome</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 3 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">03</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Sorrento → Rome — The Eternal City Awaits</div>
+      <div class="guide-line">
+        <span class="guide-tag">Driver</span>
+        [TO COMPLETE — driver TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">09:00</div>
+          <div class="tl-body"><strong>Private driver at the hotel.</strong> Transfer Sorrento → Naples Centrale station (approx. 1 hour). Luggage assistance included.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">~10:40</div>
+          <div class="tl-body"><strong>Frecciarossa / Intercity — Naples Centrale → Roma Termini</strong> (1st class, flexible ticket). Journey approx. 1h 10min. [TO COMPLETE — confirm exact train time]</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">~12:00</div>
+          <div class="tl-body"><strong>Arrival Roma Termini.</strong> Private driver waiting — transfer to hotel. Check-in and afternoon at leisure.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">PM</div>
+          <div class="tl-body">Optional gentle introduction to Rome: a stroll through Trastevere or an aperitivo in Piazza Navona.</div>
+        </div>
+      </div>
+
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Overnight · Nights 3, 4 &amp; 5</div>
+          <div class="hotel-name">Hotel Aleph Rome Curio Collection or similar</div>
+          <div class="hotel-location">Via di San Basilio 15, Rome</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">04</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Rome — Vatican Museums, Sistine Chapel &amp; St. Peter's</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide / Driver</span>
+        [TO COMPLETE — guide TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">09:30</div>
+          <div class="tl-body"><strong>Private guide and driver at the hotel.</strong> Transfer to the Vatican Museums — skip-the-line private entry.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">10:15</div>
+          <div class="tl-body"><strong>Private tour: Vatican Museums and Sistine Chapel.</strong> Highlights include the Gallery of Maps, the Raphael Rooms, and Michelangelo's ceiling — one of the greatest artistic achievements in human history.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">12:15</div>
+          <div class="tl-body"><strong>Visit of St. Peter's Basilica.</strong> Michelangelo's Pietà, Bernini's baldachin, and the panoramic view from the dome (optional climb).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">13:30</div>
+          <div class="tl-body">Transfer to hotel or restaurant of choice. Lunch at leisure — <em>note: confirm gluten-free options in advance.</em></div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">15:30</div>
+          <div class="tl-body">Free afternoon: Castel Sant'Angelo, Ponte Sant'Angelo, Prati neighborhood shopping, or simply relax in the city.</div>
+        </div>
+      </div>
+
+      <div class="dinner-block">
+        <div class="dinner-label">Dinner Options — Rome (Gluten-Free Confirmed)</div>
+        <div class="dinner-options">
+          <span class="dinner-option">Il Sorpasso — Via Properzio 31/33 (natural wines, extensive GF menu)</span>
+          <span class="dinner-option">Ristorante Il Matriciano — Via dei Gracchi 55 (classic Roman, GF pasta available)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 5 — DAY 5: ROME — ANCIENT ROME & BAROQUE                   ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary · Rome</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 5 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">05</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Rome — Ancient Monuments &amp; Baroque Rome by Golf Kart</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide / Driver</span>
+        [TO COMPLETE — guide TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">09:00</div>
+          <div class="tl-body"><strong>Private guide and driver at the hotel.</strong> Transfer to the Colosseum — skip-the-line private entry.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">09:30</div>
+          <div class="tl-body"><strong>Private tour: Colosseum and Roman Forum.</strong> The amphitheater that held 70,000 spectators, the Via Sacra, the Temple of Vesta, and the Arch of Titus — 2,000 years of history in two hours.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:30</div>
+          <div class="tl-body">Transfer to hotel for a coffee break. Rest at leisure.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">13:00</div>
+          <div class="tl-body">Lunch at leisure. Recommendation: <em>La Rosetta</em> (Via della Rosetta 9 — fine seafood, GF menu confirmed).</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">15:00</div>
+          <div class="tl-body"><strong>Baroque Rome Golf Kart Tour</strong> — a fun and unique way to discover the fountains and squares of Rome: Fontana di Trevi, Piazza di Spagna, Pantheon, Piazza Navona, Campo de' Fiori. End of the tour at Piazza Navona by Tre Scalini restaurant.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">17:30</div>
+          <div class="tl-body">Free evening. Rome is magical at night — a stroll through the Jewish Quarter or a gelato at Giolitti is highly recommended.</div>
+        </div>
+      </div>
+
+      <div class="restaurant">
+        <div class="restaurant-accent"></div>
+        <div class="restaurant-body">
+          <div class="restaurant-label">Lunch Suggestion (Confirmed GF)</div>
+          <div class="restaurant-name">La Rosetta</div>
+          <div class="restaurant-info">Via della Rosetta 9, Rome (near the Pantheon) · Fine seafood, naturally gluten-free menu available · Booking name: [TO COMPLETE]</div>
+        </div>
+      </div>
+
+      <div class="dinner-block">
+        <div class="dinner-label">Dinner Options — Rome (Gluten-Free Confirmed)</div>
+        <div class="dinner-options">
+          <span class="dinner-option">Piperno — Monte de' Cenci 9 (historic Roman Jewish cuisine, GF available)</span>
+          <span class="dinner-option">Armando al Pantheon — Salita de' Crescenzi 31 (legendary trattoria, GF pasta)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Rome</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 6 — DAY 6: TRANSFER TO VENICE + DAY 7: VENICE              ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Your Itinerary · Venice</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 6 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">06</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Rome → Venice — La Serenissima</div>
+      <div class="guide-line">
+        <span class="guide-tag">Driver</span>
+        [TO COMPLETE — driver TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">08:30</div>
+          <div class="tl-body"><strong>Private driver at the hotel.</strong> Transfer to Roma Termini station, luggage assistance included.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">~09:25</div>
+          <div class="tl-body"><strong>Frecciarossa — Roma Termini → Venezia Santa Lucia</strong> (1st class, flexible ticket). Journey approx. 3h 45min. [TO COMPLETE — confirm exact train time]</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">~13:15</div>
+          <div class="tl-body"><strong>Arrival at Venezia Santa Lucia.</strong> Private water taxi awaiting — transfer by boat to the hotel. (No cars in Venice — this is the moment the city reveals its magic.)</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">14:00</div>
+          <div class="tl-body">Check-in and afternoon at leisure. We recommend a first gentle wander through the calli — no maps, no agenda. Let Venice surprise you.</div>
+        </div>
+      </div>
+
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Overnight · Nights 6 &amp; 7</div>
+          <div class="hotel-name">[TO COMPLETE — Venice Luxury Hotel]</div>
+          <div class="hotel-location">Venice — Grand Canal or Cannaregio area preferred</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">07</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Venice — San Marco, Rialto &amp; the Grand Canal</div>
+      <div class="guide-line">
+        <span class="guide-tag">Guide</span>
+        [TO COMPLETE — guide TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">09:30</div>
+          <div class="tl-body"><strong>Private guide at the hotel.</strong> Morning tour: Piazza San Marco (before the crowds), the Basilica di San Marco with its Byzantine mosaics, and the Palazzo Ducale (Doge's Palace) including the Bridge of Sighs.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">11:30</div>
+          <div class="tl-body"><strong>Rialto Market visit</strong> — the beating heart of Venice since 1097. The guide will introduce you to the fishmongers, spice vendors, and the legendary bacaro cicchetti culture. <em>Note: cicchetti (Venetian bar snacks) are often on bread — request gluten-free alternatives.</em></div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">13:00</div>
+          <div class="tl-body">Lunch at leisure. See restaurant suggestion below.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">15:00</div>
+          <div class="tl-body"><strong>Private gondola tour</strong> through the hidden calli and rio of Venice — the most intimate way to experience the city. Your gondolier will navigate routes tourists rarely see.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">16:30</div>
+          <div class="tl-body">Optional: excursion to <strong>Murano Island</strong> by private water taxi — visit a traditional glass-blowing furnace and private showroom.</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">Eve</div>
+          <div class="tl-body">Final evening in Venice — a sunset aperitivo on a canal terrace is the perfect close to the Italian journey.</div>
+        </div>
+      </div>
+
+      <div class="restaurant">
+        <div class="restaurant-accent"></div>
+        <div class="restaurant-body">
+          <div class="restaurant-label">Lunch Suggestion (Confirmed GF)</div>
+          <div class="restaurant-name">Osteria alle Testiere</div>
+          <div class="restaurant-info">Calle del Mondo Novo 5801, Castello, Venice · Intimate 24-seat restaurant, outstanding seafood, naturally gluten-free menu · Booking essential well in advance · Booking name: [TO COMPLETE]</div>
+        </div>
+      </div>
+
+      <div class="dinner-block">
+        <div class="dinner-label">Dinner Options — Venice (Gluten-Free Confirmed)</div>
+        <div class="dinner-options">
+          <span class="dinner-option">Antiche Carampane — Rio Terà delle Carampane 1911 (traditional Venetian seafood, GF available)</span>
+          <span class="dinner-option">Quadri — Piazza San Marco 121 (Michelin star, GF menu on request)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Venice</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 7 — DAY 8: DEPARTURE + INVESTMENT                          ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+  <div class="page-header">
+    <img class="page-header-logo" src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png" alt="Motivation">
+    <span class="page-header-label">Departure &amp; Investment</span>
+  </div>
+  <div class="page-content">
+
+    <!-- Day 8 -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">08</span>
+        <span class="day-date">[TO COMPLETE — Date]</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">Departure from Venice — Until Next Time, Italia</div>
+      <div class="guide-line">
+        <span class="guide-tag">Driver / Assistant</span>
+        [TO COMPLETE — driver TBD]
+      </div>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-time">[TIME]</div>
+          <div class="tl-body"><strong>Private water taxi from hotel to Venezia Santa Lucia station or Marco Polo Airport (VCE).</strong> Departure time confirmed based on flight details. [TO COMPLETE — confirm flight]</div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-time">[TIME]</div>
+          <div class="tl-body">VIP assistance at the airport. Departure. <em>Arrivederci!</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment -->
+    <div class="day-section" style="margin-top: 30px; padding-top: 0; border-top: none;">
+      <div class="section-eyebrow">Your Investment</div>
+      <div class="section-title" style="margin-bottom: 16px;">Program Details</div>
+
+      <div class="price-block">
+        <div>
+          <div class="price-label">Total Investment · 2 Guests</div>
+          <div class="price-amount">Upon Request</div>
+          <div class="price-note">Prices available upon final program confirmation</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="price-nights">7 Nights</div>
+          <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px;">2 destinations by train · Private guides &amp; drivers</div>
+        </div>
+      </div>
+
+      <div class="inclusions-grid">
+        <div>
+          <div class="col-title">Included</div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>7 nights accommodation (luxury hotels, breakfast daily)</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Private airport transfers (Naples arrival, Venice departure)</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Private 1st class train tickets (Naples→Rome and Rome→Venice)</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Private local English-speaking guides (all tour days)</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>All entrance fees (Vatican, Colosseum, Palazzo Ducale, etc.)</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Private gondola in Venice</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Water taxi transfers in Venice</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>Gluten-free dietary briefing to all pre-booked venues</div></div>
+          <div class="item-row"><div class="item-bullet-yes"></div><div>24/7 Motivation on-trip assistance</div></div>
+        </div>
+        <div>
+          <div class="col-title">Not Included</div>
+          <div class="item-row"><div class="item-bullet-no"></div><div>International flights</div></div>
+          <div class="item-row"><div class="item-bullet-no"></div><div>Lunches and dinners (unless specified)</div></div>
+          <div class="item-row"><div class="item-bullet-no"></div><div>Travel insurance (strongly recommended)</div></div>
+          <div class="item-row"><div class="item-bullet-no"></div><div>Personal expenses and gratuities</div></div>
+          <div class="item-row"><div class="item-bullet-no"></div><div>Optional activities not listed in the program</div></div>
+        </div>
+      </div>
+
+      <div class="payment-box">
+        <strong>Payment Terms —</strong> [TO COMPLETE — insert standard payment terms]. All prices are quoted in Euro and include applicable Italian taxes. Motivation m.i.c.e. srl · Via Umberto Tupini 113, 00147 Roma · +39 06 70453905 · info@motivation.it · www.motivation.it · C.F./P.IVA 06347401009
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <span class="page-footer-text">[TO COMPLETE — Client] · Amalfi · Rome · Venice, 2026</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+</div>
+
+
+</body>
+</html>

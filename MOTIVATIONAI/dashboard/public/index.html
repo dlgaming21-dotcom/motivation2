@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motivation AIOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- ── Lock screen ──────────────────────────────────────── -->
+<div id="lockScreen" class="lock-screen hidden">
+  <div class="lock-card">
+    <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation" class="lock-logo">
+    <h2>AIOS Dashboard</h2>
+    <p>Inserisci la password per accedere</p>
+    <form id="lockForm" autocomplete="off">
+      <input type="password" id="pwdInput" placeholder="Password" autocomplete="current-password">
+      <button type="submit">Accedi</button>
+    </form>
+    <div id="lockError" class="lock-error hidden">Password non corretta. Riprova.</div>
+  </div>
+</div>
+
+<!-- ── Main app ─────────────────────────────────────────── -->
+<div id="app" class="hidden">
+
+  <header class="app-header">
+    <img src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation" class="header-logo">
+    <span class="header-title">AIOS</span>
+    <div class="header-dot"></div>
+  </header>
+
+  <div class="messages-wrap" id="messagesWrap"></div>
+
+  <div class="tool-bar" id="toolBar"></div>
+
+  <div class="input-area">
+    <div class="input-box">
+      <textarea id="msgInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
+      <button id="sendBtn" title="Invia (Invio)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22,2 15,22 11,13 2,9"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="input-hint">Invio per inviare &nbsp;·&nbsp; Shift+Invio per nuova riga</div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script>
+/* ── Config ───────────────────────────────────────────── */
+
+const WELCOME = `Ciao! Sono l'AIOS di Motivation.
+
+Posso aiutarti con:
+- **Ricerca nel knowledge base** — clienti, viaggi passati, strutture, fornitori
+- **Proposte viaggio** — scrivi *"genera proposta per [CLIENTE]"*
+- **Richieste fornitori** — scrivi *"richieste fornitori per [CLIENTE]"*
+- **Query database** — conteggi, elenchi, filtri su Airtable
+
+Come posso aiutarti?`;
+
+const TOOL_LABELS = {
+  search_ragie:        'Cercando nel knowledge base',
+  query_airtable:      'Consultando il database',
+  generate_proposal:   'Generando la proposta',
+  save_supplier_emails:'Salvando le bozze email',
+};
+
+const DOWNLOAD_ICONS = {
+  proposal: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>`,
+  email:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`,
+};
+
+/* ── State ────────────────────────────────────────────── */
+
+let history = [];       // [{ role, content }] shown in chat
+let loading = false;
+let dashKey  = '';
+
+marked.use({ breaks: true, gfm: true });
+
+/* ── Auth ─────────────────────────────────────────────── */
+
+async function init() {
+  const stored = sessionStorage.getItem('dashKey') || '';
+  const res  = await fetch('/api/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: stored }),
+  }).then(r => r.json()).catch(() => ({ ok: false }));
+
+  if (res.ok) {
+    dashKey = stored;
+    showApp();
+  } else {
+    showLock();
+  }
+}
+
+function showLock() {
+  document.getElementById('lockScreen').classList.remove('hidden');
+  setTimeout(() => document.getElementById('pwdInput').focus(), 80);
+}
+
+function showApp() {
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  appendAssistant(WELCOME);
+  setTimeout(() => document.getElementById('msgInput').focus(), 80);
+}
+
+document.getElementById('lockForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const key = document.getElementById('pwdInput').value;
+  const ok  = await fetch('/api/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+  }).then(r => r.json()).then(d => d.ok).catch(() => false);
+
+  if (ok) {
+    dashKey = key;
+    sessionStorage.setItem('dashKey', key);
+    showApp();
+  } else {
+    document.getElementById('lockError').classList.remove('hidden');
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+});
+
+/* ── Render helpers ───────────────────────────────────── */
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function appendUser(text) {
+  const wrap = document.getElementById('messagesWrap');
+  const div = document.createElement('div');
+  div.className = 'message message-user';
+  div.innerHTML = `<div class="bubble">${escHtml(text)}</div>`;
+  wrap.appendChild(div);
+  scrollBottom();
+}
+
+function appendAssistant(mdText, downloads = []) {
+  const wrap = document.getElementById('messagesWrap');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant';
+
+  let inner = `<div class="bubble">${marked.parse(mdText || '')}</div>`;
+
+  if (downloads.length > 0) {
+    let btns = '<div class="downloads">';
+    const hasProposal = downloads.some(d => d.type === 'proposal');
+    for (const d of downloads) {
+      const icon = DOWNLOAD_ICONS[d.type] || '';
+      const fname = d.url.split('/').pop();
+      btns += `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
+    }
+    if (hasProposal) {
+      btns += `<p class="download-hint">Apri il file in Chrome → <strong>Ctrl+P</strong> → Salva come PDF<br>
+               Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+    }
+    btns += '</div>';
+    inner += btns;
+  }
+
+  div.innerHTML = inner;
+  wrap.appendChild(div);
+  scrollBottom();
+  return div;
+}
+
+function appendPlaceholder() {
+  const wrap = document.getElementById('messagesWrap');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant';
+  div.innerHTML = `<div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  wrap.appendChild(div);
+  scrollBottom();
+  return div;
+}
+
+function setToolStatus(text) {
+  const bar = document.getElementById('toolBar');
+  if (!text) { bar.innerHTML = ''; return; }
+  bar.innerHTML = `<div class="tool-pill"><span class="spin"></span>${escHtml(text)}</div>`;
+  scrollBottom();
+}
+
+function scrollBottom() {
+  const w = document.getElementById('messagesWrap');
+  requestAnimationFrame(() => { w.scrollTop = w.scrollHeight; });
+}
+
+/* ── Send ─────────────────────────────────────────────── */
+
+async function handleSend() {
+  if (loading) return;
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  loading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  history.push({ role: 'user', content: text });
+  appendUser(text);
+
+  const placeholder = appendPlaceholder();
+
+  try {
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Dashboard-Key': dashKey },
+      body: JSON.stringify({ messages: history }),
+    });
+
+    if (resp.status === 401) {
+      sessionStorage.removeItem('dashKey');
+      location.reload();
+      return;
+    }
+
+    const reader  = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let   buffer  = '';
+    let   finalText = '';
+    const finalDownloads = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const ev = JSON.parse(line.slice(6));
+
+          if (ev.type === 'tool_start') {
+            setToolStatus(TOOL_LABELS[ev.toolName] || ev.toolName);
+          } else if (ev.type === 'tool_end') {
+            setToolStatus('');
+          } else if (ev.type === 'text') {
+            finalText = ev.content;
+          } else if (ev.type === 'downloads') {
+            finalDownloads.push(...ev.files);
+          } else if (ev.type === 'error') {
+            finalText = `⚠️ Errore: ${ev.message}`;
+          }
+        } catch {}
+      }
+    }
+
+    setToolStatus('');
+    placeholder.remove();
+    appendAssistant(finalText || '*Nessuna risposta*', finalDownloads);
+    history.push({ role: 'assistant', content: finalText });
+
+  } catch (err) {
+    setToolStatus('');
+    placeholder.remove();
+    appendAssistant(`⚠️ Errore di connessione: ${err.message}`);
+  }
+
+  loading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('msgInput').focus();
+}
+
+/* ── Input UX ─────────────────────────────────────────── */
+
+document.getElementById('msgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+document.getElementById('msgInput').addEventListener('input', function () {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 180) + 'px';
+});
+
+document.getElementById('sendBtn').addEventListener('click', handleSend);
+
+/* ── Boot ─────────────────────────────────────────────── */
+init();
+</script>
+</body>
+</html>

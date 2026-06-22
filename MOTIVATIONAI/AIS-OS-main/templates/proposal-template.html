@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{CLIENT_NAME}} — Italy by Motivation</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!--
+    HOW TO USE
+    ──────────
+    1. Find & replace every {{VARIABLE}} with real content
+    2. Add/remove .day-section blocks as needed (2 per page works well)
+    3. Open in Chrome → Ctrl+P → Save as PDF
+       Settings: A4, No margins, ✓ Background graphics
+    4. Logo URLs load from motivation.it — internet connection required at print time.
+       For offline use, download the logos and update the src= paths below.
+
+    VARIABLES REFERENCE
+    ────────────────────
+    Cover:    {{AGENCY_NAME}} {{TRAVELER_NAME}} {{DESTINATION}} {{START_DATE}} {{END_DATE}} {{NIGHTS}} {{GUESTS}}
+    Per day:  {{DAY_N_DATE}} {{DAY_N_TITLE}} {{DAY_N_DESCRIPTION}}
+              {{DAY_N_EXP_1..3}} {{DAY_N_HOTEL}} {{DAY_N_HOTEL_LOCATION}}
+
+    NOTE: Pricing goes in a separate document — no Investment page in this template.
+  -->
+
+  <style>
+    /* ── Brand tokens ──────────────────────────────────────────────────── */
+    :root {
+      --navy:        #1C2448;   /* confirmed from brand SVG */
+      --magenta:     #D61B7A;   /* adjust if needed to match exact brand pink */
+      --cream:       #F7F4EF;
+      --warm-white:  #FAFAF8;
+      --text:        #1A1A1A;
+      --text-muted:  #6B6B6B;
+      --border:      #E5E0D8;
+    }
+
+    /* ── Print setup ───────────────────────────────────────────────────── */
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── Page container ────────────────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /*  COVER PAGE                                                         */
+    /* ═══════════════════════════════════════════════════════════════════ */
+
+    .cover {
+      background: var(--navy);
+    }
+
+    .cover-header {
+      padding: 38px 52px 0;
+      flex-shrink: 0;
+    }
+
+    .cover-logo {
+      height: 28px;
+    }
+
+    .cover-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 52px 52px;
+      position: relative;
+    }
+
+    /* Replace the gradient with a photo:
+       .cover-bg { background-image: url('path/to/hero.jpg'); background-size: cover; background-position: center; }
+       Then set opacity: 0.35 to keep text readable. */
+    .cover-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #253068 0%, #1C2448 45%, #111830 100%);
+      opacity: 0.8;
+    }
+
+    /* Decorative vertical rule on the left */
+    .cover-rule {
+      position: absolute;
+      left: 52px;
+      top: 80px;
+      bottom: 100px;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
+      opacity: 0.6;
+    }
+
+    .cover-content {
+      position: relative;
+      z-index: 1;
+      padding-left: 20px;
+    }
+
+    .cover-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 14px;
+    }
+
+    .cover-destination {
+      font-family: 'Playfair Display', serif;
+      font-size: 54px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.08;
+      letter-spacing: -1px;
+      margin-bottom: 28px;
+    }
+
+    .cover-divider {
+      width: 44px;
+      height: 2px;
+      background: rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+
+    .cover-client {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .cover-dates {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 20px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .cover-footer {
+      flex-shrink: 0;
+      padding: 18px 52px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cover-footer-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--magenta);
+    }
+
+    .cover-footer-text {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /*  INTERIOR PAGES (Itinerary & Investment)                            */
+    /* ═══════════════════════════════════════════════════════════════════ */
+
+    .interior {
+      background: var(--warm-white);
+    }
+
+    .page-header {
+      flex-shrink: 0;
+      background: var(--navy);
+      padding: 16px 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-header-logo {
+      height: 18px;
+    }
+
+    .page-header-label {
+      font-size: 9px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+
+    .page-content {
+      flex: 1;
+      overflow: hidden;
+      padding: 40px 52px 24px;
+    }
+
+    .page-footer {
+      flex-shrink: 0;
+      padding: 14px 52px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-footer-text {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+
+    /* ── Day section ───────────────────────────────────────────────────── */
+
+    .day-section + .day-section {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .day-label {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .day-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 44px;
+      font-weight: 400;
+      color: var(--navy);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .day-date {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .day-accent {
+      width: 36px;
+      height: 2px;
+      background: var(--magenta);
+      margin-bottom: 10px;
+    }
+
+    .day-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 9px;
+      line-height: 1.3;
+    }
+
+    .day-description {
+      font-size: 12.5px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin-bottom: 14px;
+    }
+
+    .experience-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 5px 11px;
+      font-size: 11.5px;
+      color: var(--text);
+    }
+
+    .chip-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--magenta);
+      flex-shrink: 0;
+    }
+
+    .hotel-block {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hotel-block-accent {
+      width: 3px;
+      background: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .hotel-block-body {
+      padding: 11px 16px;
+    }
+
+    .hotel-label {
+      font-size: 8.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .hotel-name {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    .hotel-location {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /*  INVESTMENT PAGE                                                     */
+    /* ═══════════════════════════════════════════════════════════════════ */
+
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      color: var(--navy);
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    .price-block {
+      background: var(--navy);
+      padding: 22px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .price-block-left {}
+
+    .price-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 4px;
+    }
+
+    .price-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .price-note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 5px;
+    }
+
+    .price-block-right {
+      text-align: right;
+    }
+
+    .price-nights {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: #fff;
+    }
+
+    .inclusions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-bottom: 24px;
+    }
+
+    .col-title {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 9px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .item-bullet-yes {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .item-bullet-no {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      border: 1.5px solid #bbb;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .payment-box {
+      background: var(--cream);
+      border-left: 3px solid var(--magenta);
+      padding: 14px 18px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .payment-box strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 1 — COVER                                                   ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page cover">
+
+  <div class="cover-header">
+    <img class="cover-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+  </div>
+
+  <div class="cover-hero">
+    <div class="cover-bg"></div>
+    <div class="cover-rule"></div>
+
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">{{DESTINATION}}</div>
+      <div class="cover-divider"></div>
+      <div class="cover-client">Prepared for {{AGENCY_NAME}} &mdash; Re: {{TRAVELER_NAME}}</div>
+      <div class="cover-dates">{{START_DATE}} — {{END_DATE}}</div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span class="cover-footer-text">{{NIGHTS}} Nights</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">{{GUESTS}} Guests</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 2 — ITINERARY (Days 1–2)                                    ║ -->
+<!-- ║  Duplicate this page block to add more days.                      ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ── Day 1 ────────────────────────────────────────────────────── -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">01</span>
+        <span class="day-date">{{DAY_1_DATE}}</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">{{DAY_1_TITLE}}</div>
+      <div class="day-description">{{DAY_1_DESCRIPTION}}</div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>{{DAY_1_EXP_1}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_1_EXP_2}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_1_EXP_3}}</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">{{DAY_1_HOTEL}}</div>
+          <div class="hotel-location">{{DAY_1_HOTEL_LOCATION}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Day 2 ────────────────────────────────────────────────────── -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">02</span>
+        <span class="day-date">{{DAY_2_DATE}}</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">{{DAY_2_TITLE}}</div>
+      <div class="day-description">{{DAY_2_DESCRIPTION}}</div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>{{DAY_2_EXP_1}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_2_EXP_2}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_2_EXP_3}}</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">{{DAY_2_HOTEL}}</div>
+          <div class="hotel-location">{{DAY_2_HOTEL_LOCATION}}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">{{CLIENT_NAME}} · {{DESTINATION}}</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  PAGE 3 — ITINERARY (Days 3–4)  ← copy/paste as needed           ║ -->
+<!-- ╚═══════════════════════════════════════════════════════════════════╝ -->
+<div class="page interior">
+
+  <div class="page-header">
+    <img class="page-header-logo"
+         src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
+         alt="Motivation">
+    <span class="page-header-label">Your Itinerary</span>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ── Day 3 ────────────────────────────────────────────────────── -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">03</span>
+        <span class="day-date">{{DAY_3_DATE}}</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">{{DAY_3_TITLE}}</div>
+      <div class="day-description">{{DAY_3_DESCRIPTION}}</div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>{{DAY_3_EXP_1}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_3_EXP_2}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_3_EXP_3}}</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">{{DAY_3_HOTEL}}</div>
+          <div class="hotel-location">{{DAY_3_HOTEL_LOCATION}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Day 4 ────────────────────────────────────────────────────── -->
+    <div class="day-section">
+      <div class="day-label">
+        <span class="day-number">04</span>
+        <span class="day-date">{{DAY_4_DATE}}</span>
+      </div>
+      <div class="day-accent"></div>
+      <div class="day-title">{{DAY_4_TITLE}}</div>
+      <div class="day-description">{{DAY_4_DESCRIPTION}}</div>
+      <div class="experience-chips">
+        <div class="chip"><div class="chip-dot"></div>{{DAY_4_EXP_1}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_4_EXP_2}}</div>
+        <div class="chip"><div class="chip-dot"></div>{{DAY_4_EXP_3}}</div>
+      </div>
+      <div class="hotel-block">
+        <div class="hotel-block-accent"></div>
+        <div class="hotel-block-body">
+          <div class="hotel-label">Accommodation</div>
+          <div class="hotel-name">{{DAY_4_HOTEL}}</div>
+          <div class="hotel-location">{{DAY_4_HOTEL_LOCATION}}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-text">{{CLIENT_NAME}} · {{DESTINATION}}</span>
+    <span class="page-footer-text">Motivation m.i.c.e. srl · motivation.it</span>
+  </div>
+
+</div>
+
+
+<!-- Pricing goes in a separate document — no Investment page here -->
+
+
+</body>
+</html>
