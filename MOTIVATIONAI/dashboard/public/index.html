@@ -166,17 +166,15 @@ function appendAssistant(mdText, downloads = []) {
 
   let inner = `<div class="bubble">${marked.parse(mdText || '')}</div>`;
 
-  if (downloads.length > 0) {
-    let btns = '<div class="downloads">';
-    const hasProposal = downloads.some(d => d.type === 'proposal');
-    for (const d of downloads) {
-      const icon = DOWNLOAD_ICONS[d.type] || '';
-      const fname = d.url.split('/').pop();
-      btns += `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
-    }
-    if (hasProposal) {
-      btns += `<p class="download-hint">Apri il file in Chrome → <strong>Ctrl+P</strong> → Salva come PDF<br>
-               Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+       if (d.type === 'proposal') {
+        btns += `<a href="${d.url}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`;
+      } else {
+        btns += `<a href="${d.url}" class="download-btn" download="${fname}">${icon} ${escHtml(d.label)}</a>`;
+      }
+  }
+  if (hasProposal) {
+    btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>
+             Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
     }
     btns += '</div>';
     inner += btns;
