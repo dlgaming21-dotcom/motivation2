@@ -9,6 +9,7 @@ const Anthropic = require('@anthropic-ai/sdk');
 
 const { buildSystemPrompt } = require('./lib/system-prompt');
 const { toolDefinitions, executeTools } = require('./lib/tools');
+const { getConversations, upsertConversation, deleteConversation } = require('./lib/conversations');
 
 const app = express();
 app.set('trust proxy', 1); // Fix 6: trust Railway's TLS-terminating proxy so req.secure is correct
@@ -268,6 +269,39 @@ app.get('/api/kpi', checkAuth, async (req, res) => {
     revenue:      { amount: null, label: 'Q2 2026' },
     lastProposal: lastProposal.status === 'fulfilled' ? lastProposal.value : { daysAgo: null, filename: null },
   });
+});
+
+// ── Conversation persistence (shared across devices) ──────────────────────────
+
+app.get('/api/conversations', checkAuth, async (req, res) => {
+  try {
+    const convs = await getConversations();
+    res.json({ conversations: convs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/conversations/:id', checkAuth, async (req, res) => {
+  const conv = req.body;
+  if (!conv || typeof conv !== 'object' || conv.id !== req.params.id) {
+    return res.status(400).json({ error: 'invalid payload' });
+  }
+  try {
+    await upsertConversation(conv);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/conversations/:id', checkAuth, async (req, res) => {
+  try {
+    await deleteConversation(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // List all generated proposal files

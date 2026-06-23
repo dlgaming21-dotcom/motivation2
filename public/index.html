@@ -179,16 +179,23 @@ let currentConversationId = null;
 
 marked.use({ breaks: true, gfm: true });
 
-/* ── Conversation management ─────────────────────────────── */
+/* ── Conversation management (server-side, shared across devices) ── */
 
-function loadConversations() {
-  try { conversations = JSON.parse(localStorage.getItem('moti_convs') || '[]'); }
-  catch { conversations = []; }
+async function loadConversations() {
+  try {
+    const data = await fetch('/api/conversations').then(r => r.json());
+    conversations = data.conversations || [];
+  } catch {
+    conversations = [];
+  }
 }
 
-function saveConversations() {
-  try { localStorage.setItem('moti_convs', JSON.stringify(conversations)); }
-  catch {}
+function saveConversation(conv) {
+  fetch('/api/conversations/' + conv.id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(conv),
+  }).catch(() => {});
 }
 
 function getRelativeTime(dateStr) {
@@ -231,7 +238,7 @@ function getOrCreateConversation(titleText) {
   };
   conversations.unshift(conv);
   currentConversationId = conv.id;
-  saveConversations();
+  saveConversation(conv);
   renderSidebarConversations();
   return conv;
 }
@@ -252,7 +259,7 @@ function saveMessageToConversation(role, content, downloads) {
   if (downloads && downloads.length > 0) msg.downloads = downloads;
   conv.messages.push(msg);
   conv.updatedAt = new Date().toISOString();
-  saveConversations();
+  saveConversation(conv);
 }
 
 function loadConversation(id) {
@@ -344,10 +351,10 @@ function showLock() {
   setTimeout(() => document.getElementById('pwdInput').focus(), 80);
 }
 
-function showApp() {
+async function showApp() {
   document.getElementById('lockScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  loadConversations();
+  await loadConversations();
   renderSidebarConversations();
   loadKpi();
   loadProposals();
@@ -643,7 +650,6 @@ async function handleSend() {
     const reader  = resp.body.getReader();
     const decoder = new TextDecoder();
     let   buffer  = '';
-    let   streamingDiv  = null;
     let   streamingText = '';
     const finalDownloads = [];
 
@@ -663,15 +669,11 @@ async function handleSend() {
             setToolStatus('');
           } else if (ev.type === 'text_delta') {
             streamingText += ev.content;
-            if (!streamingDiv) { placeholder.remove(); streamingDiv = createStreamingBubble(); }
-            streamingDiv.querySelector('.bubble').textContent = streamingText;
-            scrollBottom();
+            // Text buffered silently — rendered all at once when complete
           } else if (ev.type === 'downloads') {
             finalDownloads.push(...ev.files);
           } else if (ev.type === 'tool_error') {
-            if (!streamingDiv) { placeholder.remove(); streamingDiv = createStreamingBubble(); }
             streamingText += `\n\n⚠️ Errore tool ${ev.toolName}: ${ev.message}`;
-            streamingDiv.querySelector('.bubble').textContent = streamingText;
           } else if (ev.type === 'error') {
             const ERROR_MSGS = {
               overloaded:      '**Server momentaneamente sovraccarico**\n\nI server di Claude sono sotto alto traffico. Aspetta 1–2 minuti e riprova — il tuo messaggio non è andato perso.',
@@ -687,16 +689,8 @@ async function handleSend() {
     }
 
     setToolStatus('');
-    if (streamingDiv) {
-      streamingDiv.classList.remove('streaming');
-      streamingDiv.querySelector('.bubble').innerHTML = DOMPurify.sanitize(marked.parse(streamingText || ''));
-      if (finalDownloads.length > 0) {
-        streamingDiv.querySelector('.msg-body').insertAdjacentHTML('beforeend', renderDownloadBtns(finalDownloads));
-      }
-    } else {
-      placeholder.remove();
-      appendAssistant(streamingText || '*Nessuna risposta*', finalDownloads);
-    }
+    placeholder.remove();
+    appendAssistant(streamingText || '*Nessuna risposta*', finalDownloads);
     // Cache proposals immediately — survives Railway redeploys and chat switches
     finalDownloads.filter(d => d.type === 'proposal').forEach(d => cacheProposal(d.url.split('/').pop()));
     const finalContent = streamingText || '*Nessuna risposta*';
