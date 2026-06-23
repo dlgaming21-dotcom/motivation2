@@ -673,7 +673,14 @@ async function handleSend() {
             streamingText += `\n\n⚠️ Errore tool ${ev.toolName}: ${ev.message}`;
             streamingDiv.querySelector('.bubble').textContent = streamingText;
           } else if (ev.type === 'error') {
-            streamingText = `⚠️ Errore: ${ev.message}`;
+            const ERROR_MSGS = {
+              overloaded:      '**Server momentaneamente sovraccarico**\n\nI server di Claude sono sotto alto traffico. Aspetta 1–2 minuti e riprova — il tuo messaggio non è andato perso.',
+              rate_limit:      '**Troppe richieste**\n\nLimite API raggiunto. Aspetta qualche minuto e riprova.',
+              invalid_request: '**Richiesta non valida**\n\nIl messaggio o l\'allegato non è stato accettato dall\'API.',
+              auth:            '**Errore autenticazione API**\n\nLa chiave API potrebbe essere scaduta o non valida. Controlla le variabili d\'ambiente su Railway.',
+              generic:         `**Errore di connessione**\n\n${ev.message}`,
+            };
+            streamingText = ERROR_MSGS[ev.errorType] || ERROR_MSGS.generic;
           }
         } catch {}
       }
@@ -700,7 +707,7 @@ async function handleSend() {
   } catch (err) {
     setToolStatus('');
     placeholder.remove();
-    appendAssistant(`⚠️ Errore di connessione: ${err.message}`);
+    appendAssistant('**Errore di connessione**\n\nImpossibile raggiungere il server. Controlla la connessione e riprova.');
   }
 
   loading = false;

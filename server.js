@@ -170,7 +170,18 @@ app.post('/api/chat', checkAuth, async (req, res) => {
 
     // Note: downloads already sent immediately after each tool — allDownloads kept for reference only
   } catch (err) {
-    send({ type: 'error', message: err.message });
+    let errorType = 'generic';
+    try {
+      const parsed = JSON.parse(err.message);
+      const t = parsed?.error?.type;
+      if (t === 'overloaded_error') errorType = 'overloaded';
+      else if (t === 'rate_limit_error') errorType = 'rate_limit';
+      else if (t === 'invalid_request_error') errorType = 'invalid_request';
+      else if (t === 'authentication_error') errorType = 'auth';
+    } catch {}
+    if (err.status === 529) errorType = 'overloaded';
+    if (err.status === 429) errorType = 'rate_limit';
+    send({ type: 'error', message: err.message, errorType });
   }
 
   send({ type: 'done' });
