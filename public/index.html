@@ -752,6 +752,12 @@ document.addEventListener('click', e => {
   if (btn) openProposal(btn.dataset.filename);
 });
 
+/* ── Spotlight mouse tracker ─────────────────────────────── */
+document.addEventListener('pointermove', (e) => {
+  document.documentElement.style.setProperty('--mx', e.clientX);
+  document.documentElement.style.setProperty('--my', e.clientY);
+});
+
 /* ── Boot ────────────────────────────────────────────────── */
 init();
 </script>

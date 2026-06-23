@@ -15,7 +15,13 @@ html { overflow-x: hidden; }
 
 body {
   font-family: -apple-system, "SF Pro Display", "SF Pro Text", system-ui, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(160deg, #ffffff 0%, #fef4fa 50%, #f8fafc 100%);
+  background:
+    radial-gradient(
+      700px circle at calc(var(--mx, -9999) * 1px) calc(var(--my, -9999) * 1px),
+      rgba(233, 30, 140, 0.045) 0%,
+      transparent 45%
+    ),
+    linear-gradient(160deg, #ffffff 0%, #fef4fa 50%, #f8fafc 100%);
   background-attachment: fixed;
   height: 100vh;
   height: 100dvh;
@@ -31,7 +37,14 @@ body {
 .lock-screen {
   position: fixed;
   inset: 0;
-  background: linear-gradient(160deg, #ffffff 0%, #fce7f3 55%, #f0f4ff 100%);
+  background:
+    radial-gradient(
+      600px circle at calc(var(--mx, -9999) * 1px) calc(var(--my, -9999) * 1px),
+      rgba(233, 30, 140, 0.13) 0%,
+      transparent 45%
+    ),
+    linear-gradient(160deg, #ffffff 0%, #fce7f3 55%, #f0f4ff 100%);
+  background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -421,6 +434,44 @@ body {
 .kpi-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 40px rgba(233,30,140,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* KPI card spotlight glow border */
+.kpi-card {
+  position: relative;
+}
+.kpi-card::before,
+.kpi-card::after {
+  pointer-events: none;
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid transparent;
+  border-radius: 22px;
+  background-attachment: fixed;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+.kpi-card::before {
+  background-image: radial-gradient(
+    250px circle at calc(var(--mx, -9999) * 1px) calc(var(--my, -9999) * 1px),
+    hsl(320 100% 55% / 0.9),
+    transparent 100%
+  );
+  filter: brightness(2);
+}
+.kpi-card::after {
+  background-image: radial-gradient(
+    130px circle at calc(var(--mx, -9999) * 1px) calc(var(--my, -9999) * 1px),
+    rgba(255, 255, 255, 0.85),
+    transparent 100%
+  );
 }
 
 .kpi-icon { font-size: 20px; margin-bottom: 4px; }
