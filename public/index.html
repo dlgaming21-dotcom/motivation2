@@ -370,18 +370,16 @@ function startChat() {
 
 /* ── Proposals list ──────────────────────────────────────── */
 
-async function loadProposals() {
-  try {
-    const data = await fetch('/api/list-proposals').then(r => r.json());
-    if (!data.proposals || data.proposals.length === 0) return;
-    const section = document.getElementById('docsSection');
-    const list = document.getElementById('docsList');
-    const icon = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>`;
-    list.innerHTML = data.proposals.map(p =>
-      `<a href="${escHtml(p.url)}" class="doc-item" target="_blank" rel="noopener noreferrer">${icon}<span>${escHtml(p.label)}</span></a>`
-    ).join('');
-    section.classList.remove('hidden');
-  } catch {}
+function loadProposals() {
+  const proposals = getProposalIndex();
+  const section = document.getElementById('docsSection');
+  const list = document.getElementById('docsList');
+  if (!proposals.length) { section.classList.add('hidden'); return; }
+  const icon = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>`;
+  list.innerHTML = proposals.map(p =>
+    `<button class="doc-item proposal-btn" data-filename="${escHtml(p.filename)}">${icon}<span>${escHtml(p.label)}</span></button>`
+  ).join('');
+  section.classList.remove('hidden');
 }
 
 /* ── KPI fetch ───────────────────────────────────────────── */
@@ -470,15 +468,65 @@ function escHtml(s) {
 function safeUrl(u) {
   if (typeof u !== 'string') return '#';
   if (u.startsWith('/downloads/')) return u;
-  if (u.startsWith('/api/print-proposal/')) return u;
   return '#';
 }
 
-function proposalOpenUrl(url) {
-  if (typeof url === 'string' && url.startsWith('/downloads/proposals/')) {
-    return '/api/print-proposal/' + url.slice('/downloads/proposals/'.length);
+/* ── Proposal cache (localStorage — survives Railway redeploys) ── */
+
+function getProposalIndex() {
+  try { return JSON.parse(localStorage.getItem('moti_proposals') || '[]'); }
+  catch { return []; }
+}
+
+async function cacheProposal(filename) {
+  try {
+    const html = await fetch('/downloads/proposals/' + encodeURIComponent(filename))
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.text(); });
+    try { localStorage.setItem('moti_ph_' + filename, html); } catch {}
+    const idx = getProposalIndex();
+    if (!idx.find(p => p.filename === filename)) {
+      const label = filename
+        .replace(/^proposal-/, '')
+        .replace(/-(\d{4}-\d{2}-\d{2})\.html$/, ' · $1')
+        .replace(/-/g, ' ')
+        .trim();
+      idx.unshift({ filename, label, savedAt: new Date().toISOString() });
+      try { localStorage.setItem('moti_proposals', JSON.stringify(idx)); } catch {}
+    }
+    loadProposals();
+  } catch {}
+}
+
+function openProposal(filename) {
+  const html = localStorage.getItem('moti_ph_' + filename);
+  if (html) {
+    const ps = '<scr' + 'ipt>window.addEventListener("load",function(){setTimeout(window.print,600);});<' + '/scr' + 'ipt>';
+    const full = html.includes('</body>') ? html.replace('</body>', ps + '</body>') : html + ps;
+    const blob = new Blob([full], { type: 'text/html' });
+    const u = URL.createObjectURL(blob);
+    window.open(u, '_blank');
+    setTimeout(() => URL.revokeObjectURL(u), 60000);
+  } else {
+    window.open('/api/print-proposal/' + filename, '_blank');
   }
-  return url;
+}
+
+function renderDownloadBtns(downloads) {
+  if (!downloads || !downloads.length) return '';
+  let h = '<div class="downloads">';
+  const hasProp = downloads.some(d => d.type === 'proposal');
+  for (const d of downloads) {
+    const icon = DOWNLOAD_ICONS[d.type] || '';
+    const fn = d.url.split('/').pop();
+    if (d.type === 'proposal') {
+      h += `<button class="download-btn proposal-btn" data-filename="${escHtml(fn)}">${icon} ${escHtml(d.label)}</button>`;
+    } else {
+      h += `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fn)}">${icon} ${escHtml(d.label)}</a>`;
+    }
+  }
+  if (hasProp) h += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
+  h += '</div>';
+  return h;
 }
 
 function appendUser(text, fileName) {
@@ -499,31 +547,7 @@ function appendAssistant(mdText, downloads = []) {
   const wrap = document.getElementById('messagesWrap');
   const div = document.createElement('div');
   div.className = 'message message-assistant';
-
-  let inner = `<div class="msg-body">`;
-  inner += `<div class="bubble">${DOMPurify.sanitize(marked.parse(mdText || ''))}</div>`;
-
-  if (downloads.length > 0) {
-    let btns = '<div class="downloads">';
-    const hasProposal = downloads.some(d => d.type === 'proposal');
-    for (const d of downloads) {
-      const icon = DOWNLOAD_ICONS[d.type] || '';
-      const fname = d.url.split('/').pop();
-      if (d.type === 'proposal') {
-        btns += `<a href="${safeUrl(proposalOpenUrl(d.url))}" class="download-btn" target="_blank" rel="noopener noreferrer">${icon} ${escHtml(d.label)}</a>`;
-      } else {
-        btns += `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
-      }
-    }
-    if (hasProposal) {
-      btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
-    }
-    btns += '</div>';
-    inner += btns;
-  }
-
-  inner += '</div>';
-  div.innerHTML = inner;
+  div.innerHTML = `<div class="msg-body"><div class="bubble">${DOMPurify.sanitize(marked.parse(mdText || ''))}</div>${renderDownloadBtns(downloads)}</div>`;
   wrap.appendChild(div);
   scrollBottom();
   return div;
@@ -660,24 +684,14 @@ async function handleSend() {
       streamingDiv.classList.remove('streaming');
       streamingDiv.querySelector('.bubble').innerHTML = DOMPurify.sanitize(marked.parse(streamingText || ''));
       if (finalDownloads.length > 0) {
-        const msgBody = streamingDiv.querySelector('.msg-body');
-        let btns = '<div class="downloads">';
-        const hasProposal = finalDownloads.some(d => d.type === 'proposal');
-        for (const d of finalDownloads) {
-          const icon = DOWNLOAD_ICONS[d.type] || '';
-          const fname = d.url.split('/').pop();
-          btns += d.type === 'proposal'
-            ? `<a href="${safeUrl(proposalOpenUrl(d.url))}" class="download-btn" target="_blank" rel="noopener noreferrer">${icon} ${escHtml(d.label)}</a>`
-            : `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
-        }
-        if (hasProposal) btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
-        btns += '</div>';
-        msgBody.insertAdjacentHTML('beforeend', btns);
+        streamingDiv.querySelector('.msg-body').insertAdjacentHTML('beforeend', renderDownloadBtns(finalDownloads));
       }
     } else {
       placeholder.remove();
       appendAssistant(streamingText || '*Nessuna risposta*', finalDownloads);
     }
+    // Cache proposals immediately — survives Railway redeploys and chat switches
+    finalDownloads.filter(d => d.type === 'proposal').forEach(d => cacheProposal(d.url.split('/').pop()));
     const finalContent = streamingText || '*Nessuna risposta*';
     history.push({ role: 'assistant', content: finalContent });
     saveMessageToConversation('assistant', finalContent, finalDownloads);
@@ -724,6 +738,12 @@ document.getElementById('msgInput').addEventListener('input', function () {
 });
 
 document.getElementById('sendBtn').addEventListener('click', handleSend);
+
+/* ── Proposal click delegation (catches all .proposal-btn anywhere in DOM) ── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.proposal-btn');
+  if (btn) openProposal(btn.dataset.filename);
+});
 
 /* ── Boot ────────────────────────────────────────────────── */
 init();

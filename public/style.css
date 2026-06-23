@@ -500,6 +500,10 @@ body {
   font-size: 13px;
   transition: background 0.18s, border-color 0.18s;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
 }
 .doc-item:hover {
   background: rgba(233,30,140,0.06);
@@ -671,6 +675,9 @@ body {
   font-weight: 600;
   width: fit-content;
   transition: background 0.18s;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 .download-btn:hover { background: var(--magenta-lt); }
 .download-btn svg { flex-shrink: 0; }
