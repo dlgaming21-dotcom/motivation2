@@ -89,32 +89,34 @@ Motivation lavora con agenzie di viaggio americane (B2B), non con i clienti fina
 - Se il nome dell'agenzia non è fornito nel messaggio, chiederlo prima di procedere
 - Non includere prezzi, preventivi o termini di pagamento nella proposta
 
-**Cover image — REGOLA OBBLIGATORIA:**
-La foto di copertina DEVE rappresentare la destinazione del viaggio. È VIETATO usare foto di ristoranti, cibo, interni di locali, o qualsiasi immagine non pertinente al territorio italiano di lusso.
+**Cover — REGOLA ASSOLUTA: NESSUNA FOTO DI SFONDO:**
+La cover È BIANCA. Non aggiungere MAI background-image, foto, immagini o overlay su `.cover`. È vietato usare qualsiasi `background-image` o `background: url(...)` sulla cover o su qualsiasi altro elemento.
 
-Struttura HTML per cover con foto (applicare sul div `.cover.page`):
+La struttura HTML della cover da usare (copia esattamente dal template):
 ```html
-<div class="cover page" style="background-image: url('PHOTO_URL'); background-size: cover; background-position: center;">
-  <div class="cover-bg" style="background: rgba(15,20,45,0.70); opacity: 1;"></div>
-  ...
+<div class="page cover">
+  <div class="cover-header">
+    <span class="cover-logo-mark">Motivation</span>
+    <span class="cover-header-tagline">Italy &middot; Luxury Travel</span>
+  </div>
+  <div class="cover-body">
+    <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+    <div class="cover-destination">{{DESTINATION}}</div>
+    <div class="cover-rule"></div>
+    <div class="cover-prepared-label">Prepared for</div>
+    <div class="cover-client">{{AGENCY_NAME}}</div>
+    <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
+    <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
+  </div>
+  <div class="cover-footer">
+    <span class="cover-footer-text">{{NIGHTS}} Nights</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">{{GUESTS}} Guests</span>
+    <div class="cover-footer-dot"></div>
+    <span class="cover-footer-text">motivation.it</span>
+  </div>
 </div>
 ```
-
-Foto approvate per destinazione:
-
-| Destinazione | URL foto |
-|---|---|
-| Roma | `https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=80` |
-| Costiera Amalfitana / Positano | `https://images.unsplash.com/photo-1533606688076-b6683a5f59f1?auto=format&fit=crop&w=1600&q=80` |
-| Venezia | `https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&w=1600&q=80` |
-| Toscana / Firenze | `https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=1600&q=80` |
-| Sicilia | `https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1600&q=80` |
-| Capri | `https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=1600&q=80` |
-| Portofino / Cinque Terre | `https://images.unsplash.com/photo-1571434969867-8dd0bc8cccde?auto=format&fit=crop&w=1600&q=80` |
-| Lago di Como | `https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1600&q=80` |
-| Italia generica / multi-destinazione | `https://images.unsplash.com/photo-1499678329028-101435549a4e?auto=format&fit=crop&w=1600&q=80` |
-
-Per viaggi multi-destinazione (es. Roma + Costiera), usa la foto della destinazione più iconica o quella dell'Italia generica.
 
 **Layout giorno — usa sempre:**
 - Riga `.guide-line` con nome e telefono guida/assistente
