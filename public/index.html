@@ -237,10 +237,12 @@ function contentForStorage(content) {
   return String(content);
 }
 
-function saveMessageToConversation(role, content) {
+function saveMessageToConversation(role, content, downloads) {
   const conv = conversations.find(c => c.id === currentConversationId);
   if (!conv) return;
-  conv.messages.push({ role, content: contentForStorage(content) });
+  const msg = { role, content: contentForStorage(content) };
+  if (downloads && downloads.length > 0) msg.downloads = downloads;
+  conv.messages.push(msg);
   conv.updatedAt = new Date().toISOString();
   saveConversations();
 }
@@ -267,7 +269,7 @@ function loadConversation(id) {
     if (msg.role === 'user') {
       appendUser(msg.content, null);
     } else {
-      appendAssistant(msg.content, []);
+      appendAssistant(msg.content, msg.downloads || []);
     }
   }
 
@@ -441,7 +443,17 @@ function escHtml(s) {
 }
 
 function safeUrl(u) {
-  return (typeof u === 'string' && u.startsWith('/downloads/')) ? u : '#';
+  if (typeof u !== 'string') return '#';
+  if (u.startsWith('/downloads/')) return u;
+  if (u.startsWith('/api/print-proposal/')) return u;
+  return '#';
+}
+
+function proposalOpenUrl(url) {
+  if (typeof url === 'string' && url.startsWith('/downloads/proposals/')) {
+    return '/api/print-proposal/' + url.slice('/downloads/proposals/'.length);
+  }
+  return url;
 }
 
 function appendUser(text, fileName) {
@@ -473,7 +485,7 @@ function appendAssistant(mdText, downloads = []) {
       const icon = DOWNLOAD_ICONS[d.type] || '';
       const fname = d.url.split('/').pop();
       if (d.type === 'proposal') {
-        btns += `<a href="${safeUrl(d.url)}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`;
+        btns += `<a href="${safeUrl(proposalOpenUrl(d.url))}" class="download-btn" target="_blank" rel="noopener noreferrer">${icon} ${escHtml(d.label)}</a>`;
       } else {
         btns += `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
       }
@@ -630,7 +642,7 @@ async function handleSend() {
           const icon = DOWNLOAD_ICONS[d.type] || '';
           const fname = d.url.split('/').pop();
           btns += d.type === 'proposal'
-            ? `<a href="${safeUrl(d.url)}" class="download-btn" target="_blank" rel="noopener">${icon} ${escHtml(d.label)}</a>`
+            ? `<a href="${safeUrl(proposalOpenUrl(d.url))}" class="download-btn" target="_blank" rel="noopener noreferrer">${icon} ${escHtml(d.label)}</a>`
             : `<a href="${safeUrl(d.url)}" class="download-btn" download="${escHtml(fname)}">${icon} ${escHtml(d.label)}</a>`;
         }
         if (hasProposal) btns += `<p class="download-hint">Si apre la finestra di stampa → <strong>Salva come PDF</strong><br>Impostazioni: A4, senza margini, ✓ grafica di sfondo</p>`;
@@ -643,7 +655,7 @@ async function handleSend() {
     }
     const finalContent = streamingText || '*Nessuna risposta*';
     history.push({ role: 'assistant', content: finalContent });
-    saveMessageToConversation('assistant', finalContent);
+    saveMessageToConversation('assistant', finalContent, finalDownloads);
     renderSidebarConversations();
 
   } catch (err) {

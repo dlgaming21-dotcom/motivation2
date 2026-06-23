@@ -67,56 +67,48 @@
 
 
     /* ═══════════════════════════════════════════════════════════════════ */
-    /*  COVER PAGE                                                         */
+    /*  COVER PAGE — white, no background image                           */
     /* ═══════════════════════════════════════════════════════════════════ */
 
     .cover {
-      background: var(--primary);
+      background: #fff;
+      position: relative;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--magenta);
     }
 
     .cover-header {
       padding: 38px 52px 0;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .cover-logo {
-      height: 28px;
+      height: 26px;
+      filter: brightness(0) saturate(100%) invert(19%) sepia(84%) saturate(3000%) hue-rotate(314deg) brightness(85%);
     }
 
-    .cover-hero {
+    .cover-header-tagline {
+      font-size: 9px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .cover-body {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      padding: 0 52px 52px;
-      position: relative;
-    }
-
-    /* Replace the gradient with a photo:
-       .cover-bg { background-image: url('path/to/hero.jpg'); background-size: cover; background-position: center; }
-       Then set opacity: 0.35 to keep text readable. */
-    .cover-bg {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, #333333 0%, #1a1a1a 45%, #111111 100%);
-      opacity: 0.8;
-    }
-
-    /* Decorative vertical rule on the left */
-    .cover-rule {
-      position: absolute;
-      left: 52px;
-      top: 80px;
-      bottom: 100px;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
-      opacity: 0.6;
-    }
-
-    .cover-content {
-      position: relative;
-      z-index: 1;
-      padding-left: 20px;
+      justify-content: center;
+      padding: 0 64px;
     }
 
     .cover-eyebrow {
@@ -125,45 +117,59 @@
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--magenta);
-      margin-bottom: 14px;
+      margin-bottom: 18px;
     }
 
     .cover-destination {
       font-family: Georgia, serif;
-      font-size: 54px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.08;
+      font-size: 50px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.1;
       letter-spacing: -1px;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
-    .cover-divider {
-      width: 44px;
+    .cover-rule {
+      width: 48px;
       height: 2px;
-      background: rgba(255,255,255,0.2);
-      margin-bottom: 20px;
+      background: var(--magenta);
+      margin-bottom: 30px;
+    }
+
+    .cover-prepared-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
     }
 
     .cover-client {
-      font-size: 12px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .cover-traveler {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
     }
 
     .cover-dates {
       font-family: Georgia, serif;
-      font-size: 20px;
-      color: rgba(255,255,255,0.9);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--primary);
     }
 
     .cover-footer {
       flex-shrink: 0;
       padding: 18px 52px;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      background: var(--primary);
       display: flex;
       align-items: center;
       gap: 14px;
@@ -178,7 +184,7 @@
 
     .cover-footer-text {
       font-size: 10px;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.45);
       letter-spacing: 1.5px;
       text-transform: uppercase;
     }
@@ -502,19 +508,17 @@
     <img class="cover-logo"
          src="https://motivation.it/wp-content/uploads/2023/05/motivation-logo-w.png"
          alt="Motivation">
+    <span class="cover-header-tagline">Italy &middot; Luxury Travel</span>
   </div>
 
-  <div class="cover-hero">
-    <div class="cover-bg"></div>
+  <div class="cover-body">
+    <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+    <div class="cover-destination">{{DESTINATION}}</div>
     <div class="cover-rule"></div>
-
-    <div class="cover-content">
-      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
-      <div class="cover-destination">{{DESTINATION}}</div>
-      <div class="cover-divider"></div>
-      <div class="cover-client">Prepared for {{AGENCY_NAME}} &mdash; Re: {{TRAVELER_NAME}}</div>
-      <div class="cover-dates">{{START_DATE}} — {{END_DATE}}</div>
-    </div>
+    <div class="cover-prepared-label">Prepared for</div>
+    <div class="cover-client">{{AGENCY_NAME}}</div>
+    <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
+    <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
   </div>
 
   <div class="cover-footer">

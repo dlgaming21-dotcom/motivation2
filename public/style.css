@@ -1,5 +1,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+html { overflow-x: hidden; }
+
 :root {
   --magenta:      #E91E8C;
   --magenta-lt:   #f0359c;
@@ -15,8 +17,10 @@ body {
   font-family: -apple-system, "SF Pro Display", "SF Pro Text", system-ui, BlinkMacSystemFont, sans-serif;
   background: linear-gradient(160deg, #ffffff 0%, #fef4fa 50%, #f8fafc 100%);
   background-attachment: fixed;
+  height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  overflow-x: hidden;
   color: var(--text);
 }
 
@@ -115,7 +119,9 @@ body {
 #app {
   display: flex;
   width: 100%;
+  height: 100vh;
   height: 100dvh;
+  overflow: hidden;
 }
 
 /* ── Sidebar ─────────────────────────────────── */
@@ -265,6 +271,8 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 0; /* forces flex to calculate correctly even when sidebar is fixed */
+  height: 100vh;
   height: 100dvh;
 }
 
@@ -723,6 +731,10 @@ body {
   .sidebar-close { display: flex; }
   .menu-btn { display: flex; padding: 10px 12px; min-width: 44px; min-height: 44px; }
 
+  /* Prevent the sidebar's fixed position from leaving ghost space in flex layout
+     on older WebKit/iOS versions that miscalculate flex container width */
+  .main-area { width: 100%; max-width: 100vw; }
+
   .message { max-width: 92%; }
   .message-user { max-width: 84%; }
   .messages-wrap { padding: 16px 14px 8px; }
@@ -740,4 +752,14 @@ body {
   #msgInput { font-size: 16px; }
   /* Hide desktop keyboard shortcut hint */
   .input-hint { display: none; }
+
+  /* Download buttons: larger tap target and prevent double-tap zoom */
+  .download-btn {
+    min-height: 48px;
+    width: 100%;
+    justify-content: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(233,30,140,0.15);
+  }
+  .downloads { width: 100%; }
 }
