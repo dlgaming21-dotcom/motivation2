@@ -259,6 +259,31 @@ app.get('/api/kpi', checkAuth, async (req, res) => {
   });
 });
 
+// List all generated proposal files
+app.get('/api/list-proposals', checkAuth, async (req, res) => {
+  const dir = path.join(__dirname, 'downloads/proposals');
+  try {
+    const files = await fs.promises.readdir(dir);
+    const htmlFiles = files.filter(f => f.endsWith('.html'));
+    if (htmlFiles.length === 0) return res.json({ proposals: [] });
+
+    const withMeta = await Promise.all(
+      htmlFiles.map(async f => {
+        const stat = await fs.promises.stat(path.join(dir, f));
+        const label = f
+          .replace(/^proposal-/, '')
+          .replace(/-(\d{4}-\d{2}-\d{2})\.html$/, ' · $1')
+          .replace(/-/g, ' ');
+        return { filename: f, label, url: `/api/print-proposal/${f}`, mtime: stat.mtimeMs };
+      })
+    );
+    withMeta.sort((a, b) => b.mtime - a.mtime);
+    res.json({ proposals: withMeta });
+  } catch {
+    res.json({ proposals: [] });
+  }
+});
+
 async function start() {
   if (!process.env.DASHBOARD_PASSWORD) {
     console.error('FATAL: DASHBOARD_PASSWORD non impostata. Il server non si avvia senza autenticazione.');

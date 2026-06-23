@@ -101,6 +101,14 @@
         </div>
 
         <div class="welcome-hint">Scrivi un messaggio per iniziare</div>
+
+        <div class="docs-section hidden" id="docsSection">
+          <div class="docs-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>
+            Proposte generate
+          </div>
+          <div class="docs-list" id="docsList"></div>
+        </div>
       </div>
     </div>
 
@@ -342,6 +350,7 @@ function showApp() {
   loadConversations();
   renderSidebarConversations();
   loadKpi();
+  loadProposals();
   setTimeout(() => document.getElementById('msgInput').focus(), 80);
 }
 
@@ -357,6 +366,22 @@ function startChat() {
     document.getElementById('messagesWrap').classList.remove('hidden');
     document.getElementById('toolBar').classList.remove('hidden');
   }, 320);
+}
+
+/* ── Proposals list ──────────────────────────────────────── */
+
+async function loadProposals() {
+  try {
+    const data = await fetch('/api/list-proposals').then(r => r.json());
+    if (!data.proposals || data.proposals.length === 0) return;
+    const section = document.getElementById('docsSection');
+    const list = document.getElementById('docsList');
+    const icon = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>`;
+    list.innerHTML = data.proposals.map(p =>
+      `<a href="${escHtml(p.url)}" class="doc-item" target="_blank" rel="noopener noreferrer">${icon}<span>${escHtml(p.label)}</span></a>`
+    ).join('');
+    section.classList.remove('hidden');
+  } catch {}
 }
 
 /* ── KPI fetch ───────────────────────────────────────────── */

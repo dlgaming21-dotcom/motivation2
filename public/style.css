@@ -458,6 +458,56 @@ body {
 
 .welcome-hint { font-size: 13px; color: var(--muted); opacity: 0.65; }
 
+/* ── Docs section ────────────────────────────────── */
+
+.docs-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.docs-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  transition: background 0.18s, border-color 0.18s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.doc-item:hover {
+  background: rgba(233,30,140,0.06);
+  border-color: rgba(233,30,140,0.18);
+  color: var(--magenta);
+}
+.doc-item svg { flex-shrink: 0; color: var(--magenta); }
+
 /* ── Messages ────────────────────────────────── */
 
 .messages-wrap {
