@@ -572,15 +572,6 @@ function appendPlaceholder() {
   return div;
 }
 
-function createStreamingBubble() {
-  const wrap = document.getElementById('messagesWrap');
-  const div = document.createElement('div');
-  div.className = 'message message-assistant streaming';
-  div.innerHTML = '<div class="msg-body"><div class="bubble"></div></div>';
-  wrap.appendChild(div);
-  scrollBottom();
-  return div;
-}
 
 function setToolStatus(text) {
   const bar = document.getElementById('toolBar');

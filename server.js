@@ -12,8 +12,36 @@ const { toolDefinitions, executeTools } = require('./lib/tools');
 const { getConversations, upsertConversation, deleteConversation } = require('./lib/conversations');
 
 const app = express();
-app.set('trust proxy', 1); // Fix 6: trust Railway's TLS-terminating proxy so req.secure is correct
-app.use(express.json({ limit: '10mb' }));
+app.set('trust proxy', 1);
+app.use(express.json({ limit: '2mb' }));
+
+// Security headers on every response
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
+// Brute-force protection on /api/verify — 5 attempts per IP per 15 min
+const loginAttempts = new Map();
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const WINDOW = 15 * 60 * 1000;
+  const MAX = 5;
+  let entry = loginAttempts.get(ip);
+  if (!entry || now - entry.ts > WINDOW) {
+    entry = { count: 0, ts: now };
+  }
+  entry.count++;
+  loginAttempts.set(ip, entry);
+  return entry.count <= MAX;
+}
+setInterval(() => {
+  const cutoff = Date.now() - 15 * 60 * 1000;
+  for (const [ip, e] of loginAttempts) if (e.ts < cutoff) loginAttempts.delete(ip);
+}, 5 * 60 * 1000);
 app.use(express.static(path.join(__dirname, 'public')));
 // Fix 3: add CSP to /downloads so LLM-generated HTML can't execute scripts when opened directly
 app.use('/downloads', (req, res, next) => {
@@ -91,8 +119,14 @@ app.post('/api/chat', checkAuth, async (req, res) => {
   try {
     let apiMessages = messages.map(m => ({ role: m.role, content: m.content }));
     const allDownloads = [];
+    let iterations = 0;
+    const MAX_ITERATIONS = 10;
 
     while (true) {
+      if (++iterations > MAX_ITERATIONS) {
+        send({ type: 'error', message: 'Troppi cicli tool — fermato automaticamente.', errorType: 'generic' });
+        break;
+      }
       const stream = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 16384,
@@ -195,6 +229,10 @@ app.post('/api/verify', (req, res) => {
   const { key } = req.body;
 
   if (key) {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({ ok: false, error: 'Troppi tentativi. Riprova tra 15 minuti.' });
+    }
     if (key !== password) return res.json({ ok: false });
     const token = createSession();
     const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
@@ -343,7 +381,7 @@ async function start() {
     }
   }, 60 * 60 * 1000);
 
-  ['downloads/proposals', 'downloads/supplier-requests'].forEach(dir => {
+  ['downloads/proposals', 'downloads/supplier-requests', 'data'].forEach(dir => {
     const p = path.join(__dirname, dir);
     if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
   });
