@@ -21,7 +21,9 @@ app.get('/api/print-proposal/:filename', async (req, res) => {
   const filePath = path.join(__dirname, 'downloads/proposals', filename);
   try {
     let html = await fs.promises.readFile(filePath, 'utf-8');
+    const screenStyle = `<style>@media screen{body{background:#e0e0e0;display:flex;flex-direction:column;align-items:center;padding:32px 0;gap:24px;min-height:100vh;}.page{box-shadow:0 4px 24px rgba(0,0,0,.18);margin:0!important;}}</style>`;
     const printScript = '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},600);});</script>';
+    html = html.replace('</head>', screenStyle + '</head>');
     html = html.replace('</body>', printScript + '</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
