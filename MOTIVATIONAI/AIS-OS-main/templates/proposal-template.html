@@ -67,28 +67,18 @@
 
 
     /* ═══════════════════════════════════════════════════════════════════ */
-    /*  COVER PAGE — white, no background image                           */
+    /*  COVER PAGE — dark navy, content at bottom                         */
     /* ═══════════════════════════════════════════════════════════════════ */
 
     .cover {
-      background: #fff;
-      position: relative;
-    }
-
-    .cover::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 4px;
-      background: var(--magenta);
+      background: var(--primary);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .cover-header {
       padding: 38px 52px 0;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
     .cover-logo-mark {
@@ -96,24 +86,30 @@
       font-weight: 800;
       letter-spacing: 3.5px;
       text-transform: uppercase;
-      color: var(--magenta);
+      color: rgba(255,255,255,0.7);
       font-family: Arial, sans-serif;
     }
 
-    .cover-header-tagline {
-      font-size: 9px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .cover-body {
+    .cover-hero {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 0 64px;
+      justify-content: flex-end;
+      padding: 0 52px 52px;
+      position: relative;
     }
+
+    .cover-rule {
+      position: absolute;
+      left: 52px; top: 60px; bottom: 100px;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--magenta) 30%, var(--magenta) 70%, transparent);
+      opacity: 0.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .cover-content { padding-left: 20px; }
 
     .cover-eyebrow {
       font-size: 10px;
@@ -121,24 +117,26 @@
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--magenta);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .cover-destination {
       font-family: Georgia, serif;
       font-size: 50px;
       font-weight: 700;
-      color: var(--primary);
-      line-height: 1.1;
+      color: #fff;
+      line-height: 1.08;
       letter-spacing: -1px;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     }
 
-    .cover-rule {
-      width: 48px;
+    .cover-divider {
+      width: 44px;
       height: 2px;
-      background: var(--magenta);
-      margin-bottom: 30px;
+      background: rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .cover-prepared-label {
@@ -146,34 +144,35 @@
       font-weight: 600;
       letter-spacing: 2.5px;
       text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 6px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 5px;
     }
 
     .cover-client {
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--primary);
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 1.5px;
       margin-bottom: 4px;
     }
 
     .cover-traveler {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 22px;
     }
 
     .cover-dates {
       font-family: Georgia, serif;
-      font-size: 22px;
       font-style: italic;
-      color: var(--primary);
+      font-size: 22px;
+      color: rgba(255,255,255,0.9);
     }
 
     .cover-footer {
       flex-shrink: 0;
       padding: 18px 52px;
-      background: var(--primary);
+      border-top: 1px solid rgba(255,255,255,0.08);
       display: flex;
       align-items: center;
       gap: 14px;
@@ -184,11 +183,13 @@
       height: 4px;
       border-radius: 50%;
       background: var(--magenta);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .cover-footer-text {
       font-size: 10px;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.35);
       letter-spacing: 1.5px;
       text-transform: uppercase;
     }
@@ -515,17 +516,19 @@
 
   <div class="cover-header">
     <span class="cover-logo-mark">Motivation</span>
-    <span class="cover-header-tagline">Italy &middot; Luxury Travel</span>
   </div>
 
-  <div class="cover-body">
-    <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
-    <div class="cover-destination">{{DESTINATION}}</div>
+  <div class="cover-hero">
     <div class="cover-rule"></div>
-    <div class="cover-prepared-label">Prepared for</div>
-    <div class="cover-client">{{AGENCY_NAME}}</div>
-    <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
-    <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">{{DESTINATION}}</div>
+      <div class="cover-divider"></div>
+      <div class="cover-prepared-label">Prepared for</div>
+      <div class="cover-client">{{AGENCY_NAME}}</div>
+      <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
+      <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
+    </div>
   </div>
 
   <div class="cover-footer">

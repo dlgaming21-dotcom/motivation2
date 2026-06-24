@@ -89,24 +89,26 @@ Motivation lavora con agenzie di viaggio americane (B2B), non con i clienti fina
 - Se il nome dell'agenzia non è fornito nel messaggio, chiederlo prima di procedere
 - Non includere prezzi, preventivi o termini di pagamento nella proposta
 
-**Cover — REGOLA ASSOLUTA: NESSUNA FOTO DI SFONDO:**
-La cover È BIANCA. Non aggiungere MAI background-image, foto, immagini o overlay su `.cover`. È vietato usare qualsiasi `background-image` o `background: url(...)` sulla cover o su qualsiasi altro elemento.
+**Cover — REGOLA OBBLIGATORIA:**
+La cover è dark navy. Non modificare colori, font, layout. TUTTI i `{{placeholder}}` DEVONO essere sostituiti — nessuno deve rimanere nel file finale.
 
 La struttura HTML della cover da usare (copia esattamente dal template):
 ```html
 <div class="page cover">
   <div class="cover-header">
     <span class="cover-logo-mark">Motivation</span>
-    <span class="cover-header-tagline">Italy &middot; Luxury Travel</span>
   </div>
-  <div class="cover-body">
-    <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
-    <div class="cover-destination">{{DESTINATION}}</div>
+  <div class="cover-hero">
     <div class="cover-rule"></div>
-    <div class="cover-prepared-label">Prepared for</div>
-    <div class="cover-client">{{AGENCY_NAME}}</div>
-    <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
-    <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Tailor-Made Program · Italy</div>
+      <div class="cover-destination">{{DESTINATION}}</div>
+      <div class="cover-divider"></div>
+      <div class="cover-prepared-label">Prepared for</div>
+      <div class="cover-client">{{AGENCY_NAME}}</div>
+      <div class="cover-traveler">Re: {{TRAVELER_NAME}}</div>
+      <div class="cover-dates">{{START_DATE}} &mdash; {{END_DATE}}</div>
+    </div>
   </div>
   <div class="cover-footer">
     <span class="cover-footer-text">{{NIGHTS}} Nights</span>
@@ -117,6 +119,14 @@ La struttura HTML della cover da usare (copia esattamente dal template):
   </div>
 </div>
 ```
+
+Variabili cover obbligatorie:
+- `{{DESTINATION}}` → destinazione (es. "Tuscany & Amalfi Coast")
+- `{{AGENCY_NAME}}` → nome agenzia USA (es. "Andrew Harper Travel")
+- `{{TRAVELER_NAME}}` → nome gruppo (es. "The Kirk Family")
+- `{{START_DATE}}` / `{{END_DATE}}` → formato "15 August 2026"
+- `{{NIGHTS}}` → numero notti (solo cifra)
+- `{{GUESTS}}` → numero ospiti (solo cifra)
 
 **Layout giorno — usa sempre:**
 - Riga `.guide-line` con nome e telefono guida/assistente
