@@ -122,13 +122,20 @@ app.post('/api/chat', checkAuth, async (req, res) => {
     let iterations = 0;
     const MAX_ITERATIONS = 10;
 
+    const lastUserMsg = [...apiMessages].reverse().find(m => m.role === 'user');
+    const lastUserText = typeof lastUserMsg?.content === 'string'
+      ? lastUserMsg.content
+      : (lastUserMsg?.content || []).map(c => c.text || '').join(' ');
+    const isProposalRequest = /proposta|proposal|\/proposal/i.test(lastUserText);
+    const model = isProposalRequest ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001';
+
     while (true) {
       if (++iterations > MAX_ITERATIONS) {
         send({ type: 'error', message: 'Troppi cicli tool — fermato automaticamente.', errorType: 'generic' });
         break;
       }
       const stream = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
+        model,
         max_tokens: 16384,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: apiMessages,
